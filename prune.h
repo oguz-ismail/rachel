@@ -1,0 +1,1 @@
+unsigned prune(unsigned);
