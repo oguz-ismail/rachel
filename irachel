@@ -1,0 +1,60 @@
+# Copyright 2021, 2022, 2024 Oğuz İsmail Uysal <oguzismailuysal@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received args copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+prompt() {
+	printf '%s ' "$1"
+	read reply
+} >&2
+
+try() {
+	rachel "$@"
+	case $? in
+	0) prompt 'more? [y]es, [n]o (default: no)'
+		case $reply in
+		[yY]*)
+			shift 2
+			try -s $((skip += 1)) $*
+		esac
+		exit 0 ;;
+	1) ;;
+	*) exit
+	esac
+}
+
+skip=0
+
+set -- -s 0 -- "$@"
+
+while true; do
+	try "$@"
+
+	args=$*; target=${args##* }; args=${args% *}
+	high=$((target+1)) low=$((target-1))
+
+	while true; do
+		prompt "try again? [+] $high, [-] $low, [new target], [n]o"
+		case $reply in
+		+) target=$high; high=$((high+1)) ;;
+		-) target=$low; low=$((low-1)) ;;
+		n) exit 1 ;;
+		*) set -- $args "$reply"
+			break
+		esac
+
+		try $args $target
+	done
+done
+
+# vim: ft=sh
