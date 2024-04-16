@@ -10,10 +10,7 @@ BIN = rachel
 $(BIN): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS)
 
-node.o: node.h
-prune.o: node.h
-refine.o: node.h
-search.o: node.h
+node.o prune.o refine.o search.o: node.h
 
 clean:
 	rm -f $(BIN) $(OBJS)

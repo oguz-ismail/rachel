@@ -25,6 +25,9 @@
 #include "leaf.h"
 #include "search.h"
 
+extern char *optarg;
+extern int optind;
+
 static int
 number(const char *s, int min) {
 	long x;
