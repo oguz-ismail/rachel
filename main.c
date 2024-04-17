@@ -25,9 +25,6 @@
 #include "leaf.h"
 #include "search.h"
 
-extern char *optarg;
-extern int optind;
-
 static int
 number(const char *s, int min) {
 	long x;
@@ -50,24 +47,36 @@ number(const char *s, int min) {
 int
 main(int argc, char *argv[]) {
 	size_t skip;
-	int opt;
 	int i;
+	const char *p;
 
 	skip = -1;
 
-	while ((opt = getopt(argc, argv, "s:")) != -1)
-		switch (opt) {
-		case 's':
-			skip = number(optarg, 0);
+	for (i = 1; i < argc; i++) {
+		p = argv[i];
+
+		if (*p++ != '-')
 			break;
-		default:
+
+		if (*p == '-') {
+			i++;
+			break;
+		}
+
+		if (*p++ != 's' || (*p == '\0' && i >= argc-1)) {
 			fputs("Usage: rachel [-s skip_count] numbers target\n",
 				stderr);
 			return 2;
 		}
 
-	argc -= optind;
-	argv += optind;
+		if (*p == '\0')
+			p = argv[++i];
+
+		skip = number(p, 0);
+	}
+
+	argc -= i;
+	argv += i;
 
 	if (argc < 2 || argc > 7) {
 		fputs("fewer/more operands than expected\n", stderr);
