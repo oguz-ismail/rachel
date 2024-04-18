@@ -1,3 +1,3 @@
 #include <stddef.h>
 
-int search(int, size_t);
+int search(int, int);

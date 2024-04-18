@@ -26,7 +26,7 @@
 
 static int target;
 static int oneoff = 1;
-static size_t skip;
+static int skip;
 
 static int
 search_depth(size_t d) {
@@ -88,7 +88,7 @@ search_depth(size_t d) {
 }
 
 int
-search(int x, size_t n) {
+search(int x, int n) {
 	size_t i, max;
 
 	target = x;

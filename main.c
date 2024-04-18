@@ -33,7 +33,7 @@ number(const char *s, int min) {
 	errno = 0;
 	x = strtol(s, &end, 10);
 	if (errno == 0 && x >= min && x <= INT_MAX) {
-		while (isspace(*end))
+		while (isspace((unsigned char)*end))
 			end++;
 
 		if (*end == '\0')
@@ -46,7 +46,7 @@ number(const char *s, int min) {
 
 int
 main(int argc, char *argv[]) {
-	size_t skip;
+	int skip;
 	int i;
 	const char *p;
 

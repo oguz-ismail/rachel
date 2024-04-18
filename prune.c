@@ -25,7 +25,7 @@ unsigned
 prune(unsigned ops) {
 	const struct node *l, *r;
 	int x, y;
-	unsigned tl, tr;
+	unsigned lt, rt;
 
 	l = lift();
 	r = peek();
@@ -34,17 +34,17 @@ prune(unsigned ops) {
 	y = r->value;
 	assert(x > 0 && y > 0);
 
-	tl = l->type;
-	tr = r->type;
+	lt = l->type;
+	rt = r->type;
 
-	if (x < y || (x == y && tl == LEAF && tr != LEAF)) {
+	if (x < y || (x == y && lt == LEAF && rt != LEAF)) {
 		ops &= ~(ADD|SUB|MUL|DIV);
 		assert(!ops);
 		return ops;
 	}
 
-	if (tr != LEAF) {
-		switch (tr) {
+	if (rt != LEAF) {
+		switch (rt) {
 		case ADD:
 		case SUB:
 			ops &= ~(ADD|SUB);
@@ -55,8 +55,8 @@ prune(unsigned ops) {
 			break;
 		}
 	}
-	else if (tl != LEAF) {
-		switch (tl) {
+	else if (lt != LEAF) {
+		switch (lt) {
 		case SUB:
 			ops &= ~ADD;
 			break;
@@ -65,13 +65,13 @@ prune(unsigned ops) {
 			break;
 		}
 
-		switch (tl) {
+		switch (lt) {
 		case ADD:
 		case SUB:
 		case MUL:
 		case DIV:
 			if (l->right->value < y)
-				ops &= ~tl;
+				ops &= ~lt;
 
 			break;
 		}

@@ -7,6 +7,8 @@ BIN = rachel
 .c.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
+all: $(BIN)
+
 $(BIN): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS)
 

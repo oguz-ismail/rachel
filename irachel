@@ -13,19 +13,16 @@
 # You should have received args copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-prompt() {
-	printf '%s ' "$1"
-	read reply
-} >&2
-
-try() {
+retry() {
 	rachel "$@"
 	case $? in
-	0) prompt 'more? [y]es, [n]o (default: no)'
+	0) echo 'more? [y]es, [n]o (default: no)' >&2
+		read reply
 		case $reply in
 		[yY]*)
 			shift 2
-			try -s $((skip += 1)) $*
+			skip=`expr $skip + 1`
+			retry -s $skip $*
 		esac
 		exit 0 ;;
 	1) ;;
@@ -38,22 +35,24 @@ skip=0
 set -- -s 0 -- "$@"
 
 while true; do
-	try "$@"
+	retry "$@"
 
-	args=$*; target=${args##* }; args=${args% *}
-	high=$((target+1)) low=$((target-1))
+	args=`echo $* | sed 's/ [^ ]*$//'`
+	target=`echo $* | sed 's/.* //'`
+	high=`expr $target + 1` low=`expr $target - 1`
 
 	while true; do
-		prompt "try again? [+] $high, [-] $low, [new target], [n]o"
+		echo "try again? [+] $high, [-] $low, [new target], [n]o" >&2
+		read reply
 		case $reply in
-		+) target=$high; high=$((high+1)) ;;
-		-) target=$low; low=$((low-1)) ;;
+		+) target=$high; high=`expr $high + 1` ;;
+		-) target=$low; low=`expr $low - 1` ;;
 		n) exit 1 ;;
 		*) set -- $args "$reply"
 			break
 		esac
 
-		try $args $target
+		retry $args $target
 	done
 done
 
