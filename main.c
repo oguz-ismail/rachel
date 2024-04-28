@@ -16,30 +16,39 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <ctype.h>
-#include <errno.h>
 #include <limits.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include "leaf.h"
 #include "search.h"
 
 static int
 number(const char *s, int min) {
-	long x;
-	char *end;
+	int x;
+	const char *p, *start;
+	int digit;
 
-	errno = 0;
-	x = strtol(s, &end, 10);
-	if (errno == 0 && x >= min && x <= INT_MAX) {
-		while (isspace((unsigned char)*end))
-			end++;
+	for (p = s; *p == ' ' || *p == '\t'; p++);
+	start = p;
 
-		if (*end == '\0')
-			return x;
+	x = 0;
+	for (; *p >= '0' && *p <= '9'; p++) {
+		digit = *p-'0';
+		if (x > (INT_MAX-digit)/10)
+			goto err;
+
+		x = x*10 + digit;
 	}
 
+	if (p == start || x < min)
+		goto err;
+
+	for (; *p == ' ' || *p == '\t'; p++);
+	if (*p != '\0')
+		goto err;
+
+	return x;
+err:
 	fprintf(stderr, "bad number: %s\n", s);
 	_exit(2);
 }
