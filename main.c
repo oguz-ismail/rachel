@@ -23,27 +23,35 @@
 #include "search.h"
 
 static int
-number(const char *s, int min) {
+number(const char *s, int nonzero) {
 	int x;
 	const char *p, *start;
 	int digit;
 
-	for (p = s; *p == ' ' || *p == '\t'; p++);
-	start = p;
+	p = s;
+	for (; *p == ' ' || *p == '\t'; p++);
 
+	start = p;
 	x = 0;
+
 	for (; *p >= '0' && *p <= '9'; p++) {
-		digit = *p-'0';
-		if (x > (INT_MAX-digit)/10)
+		if (x > INT_MAX/10)
 			goto err;
 
-		x = x*10 + digit;
+		x *= 10;
+
+		digit = *p-'0';
+		if (x > INT_MAX-digit)
+			goto err;
+
+		x += digit;
 	}
 
-	if (p == start || x < min)
+	if (p == start || (nonzero && x == 0))
 		goto err;
 
 	for (; *p == ' ' || *p == '\t'; p++);
+
 	if (*p != '\0')
 		goto err;
 
