@@ -83,7 +83,7 @@ prune(unsigned ops) {
 	if (ops&SUB && x-y == y)
 		ops &= ~SUB;
 
-	if (ops&DIV && x/y == y)
+	if (ops&DIV && x == y*y)
 		ops &= ~DIV;
 
 	return ops;
