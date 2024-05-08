@@ -18,7 +18,7 @@
 
 #include <limits.h>
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
 #include "leaf.h"
 #include "search.h"
 
@@ -29,9 +29,10 @@ number(const char *s, int nonzero) {
 	int digit;
 
 	p = s;
-	for (; *p == ' ' || *p == '\t'; p++);
 
+	for (; *p == ' ' || *p == '\t'; p++);
 	start = p;
+
 	x = 0;
 
 	for (; *p >= '0' && *p <= '9'; p++) {
@@ -39,7 +40,6 @@ number(const char *s, int nonzero) {
 			goto err;
 
 		x *= 10;
-
 		digit = *p-'0';
 		if (x > INT_MAX-digit)
 			goto err;
@@ -51,14 +51,13 @@ number(const char *s, int nonzero) {
 		goto err;
 
 	for (; *p == ' ' || *p == '\t'; p++);
-
 	if (*p != '\0')
 		goto err;
 
 	return x;
 err:
 	fprintf(stderr, "bad number: %s\n", s);
-	_exit(2);
+	_Exit(2);
 }
 
 int
