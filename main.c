@@ -17,10 +17,16 @@
  */
 
 #include <limits.h>
-#include <stdio.h>
+#if _WIN32
 #include <stdlib.h>
+#else
+#include <unistd.h>
+#endif
 #include "leaf.h"
+#include "out.h"
 #include "search.h"
+
+#define space(c) ((c) == ' ' || (c) == '\t')
 
 static int
 number(const char *s, int nonzero) {
@@ -29,12 +35,10 @@ number(const char *s, int nonzero) {
 	int digit;
 
 	p = s;
-
-	for (; *p == ' ' || *p == '\t'; p++);
+	for (; space(*p); p++);
 	start = p;
 
 	x = 0;
-
 	for (; *p >= '0' && *p <= '9'; p++) {
 		if (x > INT_MAX/10)
 			goto err;
@@ -50,14 +54,16 @@ number(const char *s, int nonzero) {
 	if (p == start || (nonzero && x == 0))
 		goto err;
 
-	for (; *p == ' ' || *p == '\t'; p++);
+	for (; space(*p); p++);
 	if (*p != '\0')
 		goto err;
 
 	return x;
 err:
-	fprintf(stderr, "bad number: %s\n", s);
-	_Exit(2);
+	errs("bad number: ");
+	errs(s);
+	errs("\n");
+	_exit(2);
 }
 
 int
@@ -80,8 +86,8 @@ main(int argc, char *argv[]) {
 		}
 
 		if (*p++ != 's' || (*p == '\0' && i >= argc-1)) {
-			fputs("Usage: rachel [-s skip_count] numbers target\n",
-				stderr);
+			errs("Usage: "
+				"rachel [-s skip_count] numbers target\n");
 			return 2;
 		}
 
@@ -95,7 +101,7 @@ main(int argc, char *argv[]) {
 	argv += i;
 
 	if (argc < 2 || argc > 7) {
-		fputs("fewer/more operands than expected\n", stderr);
+		errs("fewer/more operands than expected\n");
 		return 2;
 	}
 
@@ -103,7 +109,7 @@ main(int argc, char *argv[]) {
 		put(number(argv[i], 1));
 
 	if (!search(number(argv[i], 1), skip)) {
-		fputs("no answer\n", stderr);
+		errs("no answer\n");
 		return 1;
 	}
 

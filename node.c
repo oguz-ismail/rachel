@@ -17,9 +17,9 @@
  */
 
 #include <assert.h>
-#include <stdio.h>
 #include "stack.h"
 #include "node.h"
+#include "out.h"
 
 int
 make(struct node *v, unsigned t) {
@@ -91,13 +91,13 @@ static const char *
 symbol(unsigned t) {
 	switch (t) {
 	case ADD:
-		return "+";
+		return " + ";
 	case SUB:
-		return "-";
+		return " - ";
 	case MUL:
-		return "*";
+		return " * ";
 	case DIV:
-		return "/";
+		return " / ";
 	default:
 		assert(0);
 	}
@@ -106,12 +106,23 @@ symbol(unsigned t) {
 }
 
 void
-print(const struct node *v) {
-	if (v->type == LEAF)
-		return;
+print(const struct node *v, int root) {
+	if (v->type == LEAF) {
+		if (!root)
+			return;
 
-	print(v->left);
-	print(v->right);
-	printf("%d %s %d = %d\n", v->left->value, symbol(v->type),
-		v->right->value, v->value);
+		outn(v->value);
+	}
+	else {
+		print(v->left, 0);
+		print(v->right, 0);
+
+		outn(v->left->value);
+		outs(symbol(v->type));
+		outn(v->right->value);
+	}
+
+	outs(" = ");
+	outn(v->value);
+	outs("\n");
 }
