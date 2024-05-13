@@ -12,4 +12,4 @@ struct node {
 
 int make(struct node *, unsigned);
 void update(struct node *);
-void print(const struct node *);
+void print(const struct node *, int);
