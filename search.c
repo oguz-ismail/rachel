@@ -17,7 +17,6 @@
  */
 
 #include <assert.h>
-#include <stdio.h>
 #include "leaf.h"
 #include "refine.h"
 #include "stack.h"
@@ -65,11 +64,7 @@ search_depth(size_t d) {
 		if (oneoff)
 			answer = refine(answer);
 
-		if (answer->type == LEAF)
-			printf("%d = %d\n", answer->value, target);
-		else
-			print(answer);
-
+		print(answer, 1);
 		return 1;
 	}
 
