@@ -25,19 +25,28 @@ static size_t n, total;
 
 void
 put(int x) {
-	size_t i;
+	size_t i, j;
 
 	total++;
 
+	j = n;
 	for (i = 0; i < n; i++)
 		if (x == a[i]) {
 			c[i]++;
 			return;
 		}
+		else if (x > a[i]) {
+			j = i;
+		}
 
 	assert(n < sizeof a/sizeof a[0]);
-	a[n] = x;
-	c[n] = 1;
+	for (i = n; i > j; i--) {
+		a[i] = a[i-1];
+		c[i] = c[i-1];
+	}
+
+	a[j] = x;
+	c[j] = 1;
 	n++;
 }
 
