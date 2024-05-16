@@ -45,7 +45,7 @@ rotate(struct node *v, struct node **e) {
 }
 
 static struct node *
-rewrite(struct node *v, struct node **e, unsigned t) {
+invert(struct node *v, struct node **e, unsigned t) {
 	struct node *u;
 
 	u = rotate(v, e);
@@ -83,7 +83,7 @@ refine(struct node *v) {
 		if (l->right->value > y)
 			l = rotate(v, &l->right);
 		else if (l->right->value < y)
-			l = rewrite(v, &l->right, SUB);
+			l = invert(v, &l->right, SUB);
 		else
 			break;
 
@@ -102,11 +102,11 @@ refine(struct node *v) {
 		if (l->left->value%y == 0)
 			l = rotate(v, &l->left);
 		else if (y%l->left->value == 0)
-			flip(l = rewrite(v, &l->left, DIV));
+			flip(l = invert(v, &l->left, DIV));
 		else if (l->right->value%y == 0)
 			l = rotate(v, &l->right);
 		else if (y%l->right->value == 0)
-			l = rewrite(v, &l->right, DIV);
+			l = invert(v, &l->right, DIV);
 		else
 			break;
 

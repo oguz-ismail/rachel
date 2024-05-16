@@ -13,12 +13,13 @@
 
 ok[FILENAME] == 0 {
 	if (FILENAME == "out.c") {
-		print "#define n pn"
+		print "#undef n"
+		print "#define n xn"
 	}
 	else if (FILENAME == "stack.c") {
 		print "#undef n"
-		print "#define a sa"
-		print "#define n sn"
+		print "#define a ya"
+		print "#define n yn"
 	}
 
 	ok[FILENAME] = 1

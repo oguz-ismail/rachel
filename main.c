@@ -73,7 +73,6 @@ main(int argc, char *argv[]) {
 	const char *p;
 
 	skip = -1;
-
 	for (i = 1; i < argc; i++) {
 		p = argv[i];
 

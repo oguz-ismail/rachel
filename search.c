@@ -83,18 +83,18 @@ search_depth(size_t d) {
 }
 
 int
-search(int x, int n) {
-	size_t i, max;
+search(int x, int c) {
+	size_t i, n;
 
 	target = x;
 
-	if (n != -1) {
+	if (c != -1) {
 		oneoff = 0;
-		skip = n;
+		skip = c;
 	}
 
-	max = leaf_count();
-	for (i = 1; i <= max; i++)
+	n = leaf_count();
+	for (i = 1; i <= n; i++)
 		if (search_depth(i))
 			return 1;
 
