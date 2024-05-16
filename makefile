@@ -18,3 +18,8 @@ main.o node.o search.o: out.h
 
 clean:
 	rm -f $(BIN) $(OBJS)
+
+v0:
+	git checkout ee727f
+	$(MAKE)
+	git switch -
