@@ -1,3 +1,21 @@
+/* Copyright 2024 Oğuz İsmail Uysal <oguzismailuysal@gmail.com>
+ *
+ * This file is part of Rachel.
+ *
+ * Rachel is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include <assert.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -49,18 +67,17 @@ flush(int f) {
 
 	for (i = 0; i < n[f]; i += k) {
 		k = write(fd[f], &buf[f][i], n[f]-i);
-		if (k != -1)
-			continue;
+		if (k == -1) {
+			if (errno == EINTR) {
+				k = 0;
+				continue;
+			}
 
-		if (errno == EINTR) {
-			k = 0;
-			continue;
+			if (f != ERR)
+				print_string(ERR, "write error\n");
+
+			_exit(2);
 		}
-
-		if (f != ERR)
-			print_string(ERR, "write error\n");
-
-		_exit(2);
 	}
 
 	n[f] = 0;

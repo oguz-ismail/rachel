@@ -1,10 +1,11 @@
 CFLAGS = -O3 -DNDEBUG
 
-rachel: mono.o
-	$(CC) $(LDFLAGS) -o $@ mono.o
+rachel: merged.o
+	$(CC) $(LDFLAGS) -o $@ merged.o
 
-mono.c: leaf.c main.c node.c node.h out.c prune.c refine.c search.c stack.c
-	awk -f mkmono.awk *.h *.c >mono.c
+merged.c: leaf.c main.c node.c node.h out.c out.h prune.c refine.c search.c \
+ stack.c
+	awk -f merge.awk *.h *.c >merged.c
 
 clean:
-	rm -f rachel mono.c mono.o
+	rm -f rachel merged.c merged.o
