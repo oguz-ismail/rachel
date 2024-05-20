@@ -1,4 +1,4 @@
-od -A n -t u1 -v /dev/urandom | awk '{
+od -A n -t u1 -v </dev/urandom | awk '{
  for (i = 1; i <= NF; i++) {
 	if (ok == 0) {
 		big = $i%5
