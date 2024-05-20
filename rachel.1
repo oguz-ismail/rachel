@@ -1,0 +1,71 @@
+.\" Copyright 2024 Oguz Ismail Uysal <oguzismailuysal@gmail.com>
+.\"
+.\" This file is part of Rachel.
+.\"
+.\" Rachel is free software: you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation, either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program. If not, see <https://www.gnu.org/licenses/>.
+.
+.TH RACHEL 1 "20 May 2024"
+.SH NAME
+rachel \- Countdown solver
+.SH SYNOPSIS
+.PP
+\fBrachel\fP [\fB\-s\fP \fIskip_count\fP] \fInumbers\fP \fItarget\fP
+.PP
+\fBirachel\fP \fInumbers\fP \fItarget\fP
+.SH DESCRIPTION
+.B rachel
+solves number puzzles seen in the game show \fICountdown\fP. It takes the
+following arguments.
+.TP
+\fB\-s\fP \fIskip_count\fP
+Skip
+.I skip_count
+answers. Using this option you can explore alternative solutions to a puzzle.
+Note that shorter answers are found earlier.
+.TP
+\fInumbers\fP
+The numbers to be used for reaching the target. One to six positive integers
+provided as separate arguments.
+.TP
+\fItarget\fP
+The target number. A positive integer.
+.PP
+.B irachel
+is an interactive front-end for \fBrachel\fP. It allows you to re-invoke
+.B rachel
+with different values for
+.I target
+and
+.I skip_count
+in fewer key presses.
+.SH EXAMPLES
+.nf
+.ft CW
+$ rachel  3 4 5  8
+5 + 3 = 8
+$ rachel  -s 1  3 4 5  8
+5 - 3 = 2
+4 * 2 = 8
+.ft
+.fi
+.SH "EXIT STATUS"
+Other than 0,
+.B rachel
+returns the following exit values.
+.IP 1
+No answer.
+.IP 2
+An error occured.
+.SH "SEE ALSO"
+https://en.wikipedia.org/wiki/Countdown_(game_show)
