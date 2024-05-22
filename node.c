@@ -23,7 +23,7 @@
 
 int
 make(struct node *v, unsigned t) {
-	int x, y;
+	long x, y;
 
 	x = lift()->value;
 	y = peek()->value;
@@ -61,7 +61,7 @@ make(struct node *v, unsigned t) {
 
 void
 update(struct node *v) {
-	int x, y;
+	long x, y;
 
 	if (v->type == LEAF)
 		return;

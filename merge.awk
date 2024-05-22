@@ -7,11 +7,13 @@
 	next
 }
 
-/^#include "/ || /^struct node;/ {
+/^#include "/ || (\
+	seen["node.h"] == 1 && /^struct node;/\
+) {
 	next
 }
 
-ok[FILENAME] == 0 {
+seen[FILENAME] == 0 {
 	if (FILENAME == "out.c") {
 		print "#undef n"
 		print "#define n xn"
@@ -22,7 +24,7 @@ ok[FILENAME] == 0 {
 		print "#define n yn"
 	}
 
-	ok[FILENAME] = 1
+	seen[FILENAME] = 1
 }
 
 {

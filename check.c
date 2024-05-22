@@ -17,67 +17,60 @@
  */
 
 #include <assert.h>
-#include "stack.h"
+#include <limits.h>
 #include "node.h"
-#include "prune.h"
 
-unsigned
-prune(unsigned ops) {
-	const struct node *l, *r;
-	long x, y;
+static int
+overflow(const struct node *v) {
+	long x, y, max;
 
-	l = lift();
-	r = peek();
+	if (v->type == LEAF)
+		return 0;
 
-	x = l->value;
-	y = r->value;
-	assert(x > 0 && y > 0);
+	if (overflow(v->left) || overflow(v->right))
+		return 1;
 
-	if (x < y || (x == y && l->type > r->type)) {
-		ops &= ~(ADD|SUB|MUL|DIV);
-		assert(!ops);
-		return ops;
-	}
+	x = v->left->value;
+	y = v->right->value;
+	assert(x > 0 && y > 0 && x > y);
 
-	switch (r->type) {
+	switch (v->type) {
 	case ADD:
-	case SUB:
-		ops &= ~(ADD|SUB);
+		max = LONG_MAX-y;
 		break;
 	case MUL:
-	case DIV:
-		ops &= ~(MUL|DIV);
+		max = LONG_MAX/y;
 		break;
+	default:
+		return 0;
 	}
 
-	switch (l->type) {
-	case SUB:
-		ops &= ~ADD;
-		break;
-	case DIV:
-		ops &= ~MUL;
-		break;
-	}
+	return x > max;
+}
 
-	switch (l->type) {
-	case ADD:
-	case SUB:
-	case MUL:
-	case DIV:
-		if (ops&l->type && l->right->value < y)
-			ops &= ~l->type;
+static int
+contains(const struct node *v, long x) {
+	if (v->value == x)
+		return 1;
 
-		break;
-	}
+	if (v->type == LEAF)
+		return 0;
 
-	if (y == 1)
-		ops &= ~(MUL|DIV);
+	return contains(v->left, x) || contains(v->right, x);
+}
 
-	if (x-y == y)
-		ops &= ~SUB;
+static int
+regression(const struct node *v) {
+	if (v->type == LEAF)
+		return 0;
 
-	if (ops&DIV && x == y*y)
-		ops &= ~DIV;
+	return contains(v->left, v->value) ||
+		contains(v->right, v->value) ||
+		regression(v->left) ||
+		regression(v->right);
+}
 
-	return ops;
+int
+check(const struct node *v) {
+	return overflow(v) || regression(v);
 }

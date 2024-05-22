@@ -58,7 +58,7 @@ invert(struct node *v, struct node **e, unsigned t) {
 struct node *
 refine(struct node *v) {
 	struct node *l;
-	int x, y;
+	long x, y;
 
 	if (v->type == LEAF)
 		return v;
