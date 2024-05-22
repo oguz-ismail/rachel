@@ -44,7 +44,7 @@ print_string(int f, const char *p) {
 }
 
 void
-print_number(int f, int x) {
+print_number(int f, long x) {
 	static char s[64];
 	char *p;
 

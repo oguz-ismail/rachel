@@ -7,5 +7,5 @@
 #define errn(x) print_string(ERR, x)
 
 void print_string(int, const char *);
-void print_number(int, int);
+void print_number(int, long);
 void flush(int);

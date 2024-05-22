@@ -1,7 +1,7 @@
 CPPFLAGS += -DNDEBUG
 CFLAGS += -O3 -flto
 LDFLAGS = $(CFLAGS)
-OBJS = leaf.o main.o node.o out.o prune.o refine.o search.o stack.o
+OBJS = check.o leaf.o main.o node.o out.o prune.o refine.o search.o stack.o
 BIN = rachel
 
 .c.o:
@@ -12,7 +12,7 @@ all: $(BIN)
 $(BIN): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS)
 
-node.o prune.o refine.o search.o: node.h
+check.o node.o prune.o refine.o search.o: node.h
 
 main.o node.o search.o: out.h
 

@@ -1,5 +1,5 @@
 struct node {
-	int value;
+	long value;
 	unsigned type;
 #define ADD (1U<<0)
 #define SUB (1U<<1)
@@ -11,5 +11,6 @@ struct node {
 };
 
 int make(struct node *, unsigned);
+int check(const struct node *);
 void update(struct node *);
 void print(const struct node *, int);
