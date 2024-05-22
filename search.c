@@ -17,6 +17,7 @@
  */
 
 #include <assert.h>
+#include "check.h"
 #include "leaf.h"
 #include "refine.h"
 #include "stack.h"
@@ -52,6 +53,9 @@ search_depth(size_t d) {
 
 	if (d == 0) {
 		if (stack_size() != 1 || peek()->value != target)
+			return 0;
+
+		if (check(peek()))
 			return 0;
 
 		if (skip) {
