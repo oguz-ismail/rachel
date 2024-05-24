@@ -33,7 +33,7 @@ prune(unsigned ops) {
 	y = r->value;
 	assert(x > 0 && y > 0);
 
-	if (x < y || (x == y && l->type > r->type)) {
+	if (x < y) {
 		ops &= ~(ADD|SUB|MUL|DIV);
 		assert(!ops);
 		return ops;
