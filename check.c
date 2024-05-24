@@ -18,6 +18,7 @@
 
 #include <assert.h>
 #include <limits.h>
+#include <stddef.h>
 #include "node.h"
 
 static int
@@ -32,7 +33,7 @@ overflow(const struct node *v) {
 
 	x = v->left->value;
 	y = v->right->value;
-	assert(x > 0 && y > 0 && x > y);
+	assert(x > 0 && y > 0);
 
 	switch (v->type) {
 	case ADD:
@@ -48,15 +49,21 @@ overflow(const struct node *v) {
 	return x > max;
 }
 
-static int
-contains(const struct node *v, long x) {
+static const struct node *
+find(const struct node *v, long x) {
+	const struct node *u;
+
 	if (v->value == x)
-		return 1;
+		return v;
 
 	if (v->type == LEAF)
-		return 0;
+		return NULL;
 
-	return contains(v->left, x) || contains(v->right, x);
+	u = find(v->left, x);
+	if (u != NULL)
+		return u;
+
+	return find(v->right, x);
 }
 
 static int
@@ -64,13 +71,37 @@ regression(const struct node *v) {
 	if (v->type == LEAF)
 		return 0;
 
-	return contains(v->left, v->value) ||
-		contains(v->right, v->value) ||
+	return find(v->left, v->value) != NULL ||
+		find(v->right, v->value) != NULL ||
 		regression(v->left) ||
 		regression(v->right);
 }
 
+static int
+sift(const struct node *v, const struct node *u) {
+	const struct node *w;
+
+	w = find(u, v->value);
+	if (w != NULL && v->type > w->type)
+		return 1;
+
+	if (v->type == LEAF)
+		return 0;
+
+	return sift(v->left, u) || sift(v->right, u);
+}
+
+static int
+duplication(const struct node *v) {
+	if (v->type == LEAF)
+		return 0;
+
+	return sift(v->left, v->right) ||
+		duplication(v->left) ||
+		duplication(v->right);
+}
+
 int
 check(const struct node *v) {
-	return overflow(v) || regression(v);
+	return overflow(v) || regression(v) || duplication(v);
 }
