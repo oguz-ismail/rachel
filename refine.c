@@ -99,13 +99,13 @@ refine(struct node *v) {
 		if (l->type != MUL)
 			break;
 
-		if (l->left->value%y == 0)
+		if (l->left->value % y == 0)
 			l = rotate(v, &l->left);
-		else if (y%l->left->value == 0)
+		else if (y % l->left->value == 0)
 			flip(l = invert(v, &l->left, DIV));
-		else if (l->right->value%y == 0)
+		else if (l->right->value % y == 0)
 			l = rotate(v, &l->right);
-		else if (y%l->right->value == 0)
+		else if (y % l->right->value == 0)
 			l = invert(v, &l->right, DIV);
 		else
 			break;

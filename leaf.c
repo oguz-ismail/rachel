@@ -20,7 +20,10 @@
 #include <stddef.h>
 
 static int a[8];
-static size_t c[8], used[8];
+static size_t c[8];
+#ifndef NDEBUG
+static size_t used[8];
+#endif
 static size_t n, total;
 
 void

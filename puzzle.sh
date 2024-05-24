@@ -1,9 +1,9 @@
 od -A n -t u1 -v </dev/urandom | awk '{
  for (i = 1; i <= NF; i++) {
-	if (ok == 0) {
+	if (init == 0) {
 		big = $i%5
 		small = 6-big
-		ok = 1
+		init = 1
 	}
 	else if (small > 0) {
 		x = 1 + $i%10
