@@ -26,20 +26,19 @@
 #include "out.h"
 #include "search.h"
 
-#define space(c) ((c) == ' ' || (c) == '\t')
+#define SPACE(c) ((c) == ' ' || (c) == '\t')
+#define DIGIT(c) ((c) >= '0' && (c) <= '9')
 
 static int
-number(const char *s, int nonzero) {
+number(const char *s, int min) {
 	int x;
-	const char *p, *start;
+	const char *p;
 	int digit;
 
-	p = s;
-	for (; space(*p); p++);
-	start = p;
+	for (; SPACE(*s); s++);
 
 	x = 0;
-	for (; *p >= '0' && *p <= '9'; p++) {
+	for (p = s; DIGIT(*p); p++) {
 		if (x > INT_MAX/10)
 			goto err;
 
@@ -51,18 +50,18 @@ number(const char *s, int nonzero) {
 		x += digit;
 	}
 
-	if (p == start || (nonzero && x == 0))
+	if (p == s || x < min)
 		goto err;
 
-	for (; space(*p); p++);
+	for (; SPACE(*p); p++);
 	if (*p != '\0')
 		goto err;
 
 	return x;
 err:
-	errs("bad number: ");
-	errs(s);
-	errs("\n");
+	ERRS("bad number: ");
+	ERRS(s);
+	ERRS("\n");
 	_exit(2);
 }
 
@@ -85,7 +84,7 @@ main(int argc, char *argv[]) {
 		}
 
 		if (*p++ != 's' || (*p == '\0' && i >= argc-1)) {
-			errs("Usage: "
+			ERRS("Usage: "
 				"rachel [-s skip_count] numbers target\n");
 			return 2;
 		}
@@ -100,15 +99,16 @@ main(int argc, char *argv[]) {
 	argv += i;
 
 	if (argc < 2 || argc > 7) {
-		errs("fewer/more operands than expected\n");
+		ERRS("fewer/more operands than expected\n");
 		return 2;
 	}
 
 	for (i = 0; i < argc-1; i++)
 		put(number(argv[i], 1));
 
-	if (!search(number(argv[i], 1), skip)) {
-		errs("no answer\n");
+	target = number(argv[i], 1);
+	if (!search(skip)) {
+		ERRS("no answer\n");
 		return 1;
 	}
 

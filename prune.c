@@ -64,7 +64,7 @@ prune(unsigned ops) {
 	case SUB:
 	case MUL:
 	case DIV:
-		if (ops&l->type && l->right->value < y)
+		if (ops & l->type && l->RHS < y)
 			ops &= ~l->type;
 
 		break;
@@ -76,7 +76,7 @@ prune(unsigned ops) {
 	if (x-y == y)
 		ops &= ~SUB;
 
-	if (ops&DIV && x == y*y)
+	if (ops & DIV && x == y*y)
 		ops &= ~DIV;
 
 	return ops;

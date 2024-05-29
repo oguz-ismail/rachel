@@ -19,11 +19,13 @@
 #include <assert.h>
 #include <limits.h>
 #include <stddef.h>
+#include "leaf.h"
+#include "stack.h"
 #include "node.h"
 
 static int
 overflow(const struct node *v) {
-	long x, y, max;
+	long x, y;
 
 	if (v->type == LEAF)
 		return 0;
@@ -31,22 +33,18 @@ overflow(const struct node *v) {
 	if (overflow(v->left) || overflow(v->right))
 		return 1;
 
-	x = v->left->value;
-	y = v->right->value;
+	x = v->LHS;
+	y = v->RHS;
 	assert(x > 0 && y > 0);
 
 	switch (v->type) {
 	case ADD:
-		max = LONG_MAX-y;
-		break;
+		return x > LONG_MAX-y;
 	case MUL:
-		max = LONG_MAX/y;
-		break;
+		return x > LONG_MAX/y;
 	default:
 		return 0;
 	}
-
-	return x > max;
 }
 
 static const struct node *
@@ -64,17 +62,6 @@ find(const struct node *v, long x) {
 		return u;
 
 	return find(v->right, x);
-}
-
-static int
-regression(const struct node *v) {
-	if (v->type == LEAF)
-		return 0;
-
-	return find(v->left, v->value) != NULL ||
-		find(v->right, v->value) != NULL ||
-		regression(v->left) ||
-		regression(v->right);
 }
 
 static int
@@ -101,7 +88,41 @@ duplication(const struct node *v) {
 		duplication(v->right);
 }
 
+static int
+myopia(const struct node *v) {
+	size_t i;
+	const struct node *u;
+
+	for (i = -1; (i = next(i)) != -1; ) {
+		u = find(v, get(i));
+		if (u != NULL && u->type != LEAF)
+			return 1;
+	}
+
+	return 0;
+}
+
+static int
+regression(const struct node *v) {
+	if (v->type == LEAF)
+		return 0;
+
+	return find(v->left, v->value) != NULL ||
+		find(v->right, v->value) != NULL ||
+		regression(v->left) ||
+		regression(v->right);
+}
+
 int
-check(const struct node *v) {
-	return overflow(v) || regression(v) || duplication(v);
+check(int aux) {
+	const struct node *v;
+
+	v = peek();
+	if (overflow(v) || duplication(v))
+		return 1;
+
+	if (aux && (myopia(v) || regression(v)))
+		return 1;
+
+	return 0;
 }

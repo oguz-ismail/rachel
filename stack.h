@@ -2,7 +2,7 @@
 
 struct node;
 
-void push(const struct node *);
+void push(void *);
 struct node *pop(void);
 const struct node *peek(void);
 const struct node *lift(void);

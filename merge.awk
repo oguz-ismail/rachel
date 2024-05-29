@@ -1,18 +1,3 @@
-/^[^\t }#\/]/ && (\
-	/\);$/ || (\
-		/[^;{]$/ && !/^static/ && FILENAME != "main.c"\
-	)\
-) {
-	print "static " $0
-	next
-}
-
-/^#include "/ || (\
-	seen["node.h"] == 1 && /^struct node;/\
-) {
-	next
-}
-
 seen[FILENAME] == 0 {
 	if (FILENAME == "out.c") {
 		print "#undef n"
@@ -25,6 +10,31 @@ seen[FILENAME] == 0 {
 	}
 
 	seen[FILENAME] = 1
+}
+
+/^extern / {
+	print "static" substr($0, 7)
+	next
+}
+
+/^[a-z]/ && (\
+	/\);$/ || (\
+		/[^;{]$/ && !/^static / && FILENAME != "main.c"\
+	)\
+) {
+	print "static " $0
+	next
+}
+
+/^struct node;/ {
+	if (seen["node.h"] == 1)
+		next
+}
+
+/^#include "/ || (\
+	/^[a-z]/ && /[^)];/ && !/^static /\
+) {
+	next
 }
 
 {

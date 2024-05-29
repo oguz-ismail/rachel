@@ -35,8 +35,7 @@ rotate(struct node *v, struct node **e) {
 
 	assert(v->type != LEAF);
 	l = v->left;
-	assert(l->type != LEAF);
-	assert(*e == l->left || *e == l->right);
+	assert(e == &l->left || e == &l->right);
 	l->value = v->value;
 	v->left = *e;
 	*e = v;
@@ -67,8 +66,8 @@ refine(struct node *v) {
 	v->right = refine(v->right);
 
 	l = v->left;
-	x = l->value;
-	y = v->right->value;
+	x = v->LHS;
+	y = v->RHS;
 
 	switch (v->type) {
 	case ADD:
@@ -80,9 +79,9 @@ refine(struct node *v) {
 		if (l->type != ADD)
 			break;
 
-		if (l->right->value > y)
+		if (l->RHS > y)
 			l = rotate(v, &l->right);
-		else if (l->right->value < y)
+		else if (l->RHS < y)
 			l = invert(v, &l->right, SUB);
 		else
 			break;
@@ -99,13 +98,13 @@ refine(struct node *v) {
 		if (l->type != MUL)
 			break;
 
-		if (l->left->value % y == 0)
+		if (l->LHS % y == 0)
 			l = rotate(v, &l->left);
-		else if (y % l->left->value == 0)
+		else if (y % l->LHS == 0)
 			flip(l = invert(v, &l->left, DIV));
-		else if (l->right->value % y == 0)
+		else if (l->RHS % y == 0)
 			l = rotate(v, &l->right);
-		else if (y % l->right->value == 0)
+		else if (y % l->RHS == 0)
 			l = invert(v, &l->right, DIV);
 		else
 			break;
