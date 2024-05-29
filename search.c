@@ -24,9 +24,9 @@
 #include "node.h"
 #include "prune.h"
 
-static int target;
-static int oneoff = 1;
+int target;
 static int skip;
+static int oneoff = 1;
 
 static int
 search_depth(size_t d) {
@@ -37,7 +37,7 @@ search_depth(size_t d) {
 	if (stack_size() >= 2) {
 		mask = prune(LEAF-1);
 		for (t = 1; t < LEAF; t <<= 1) {
-			if (!(mask&t) || !make(&v, t))
+			if (!(mask & t) || !make(&v, t))
 				continue;
 
 			push(&v);
@@ -55,7 +55,7 @@ search_depth(size_t d) {
 		if (stack_size() != 1 || peek()->value != target)
 			return 0;
 
-		if (check(peek()))
+		if (check(!oneoff))
 			return 0;
 
 		if (skip) {
@@ -87,14 +87,14 @@ search_depth(size_t d) {
 }
 
 int
-search(int x, int c) {
+search(int mode) {
 	size_t i, n;
 
-	target = x;
+	assert(target > 0);
 
-	if (c != -1) {
+	if (mode != -1) {
 		oneoff = 0;
-		skip = c;
+		skip = mode;
 	}
 
 	n = leaf_count();
