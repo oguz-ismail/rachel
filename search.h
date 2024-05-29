@@ -1,3 +1,5 @@
 #include <stddef.h>
 
-int search(int, int);
+extern int target;
+
+int search(int);

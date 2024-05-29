@@ -1,3 +1,1 @@
-struct node;
-
-int check(const struct node *);
+int check(int);

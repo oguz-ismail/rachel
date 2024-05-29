@@ -19,11 +19,11 @@
 #include <assert.h>
 #include "stack.h"
 
-static const struct node *a[8];
+static void *a[8];
 static size_t n;
 
 void
-push(const struct node *x) {
+push(void *x) {
 	assert(n < sizeof a/sizeof a[0]);
 	a[n++] = x;
 }
@@ -31,7 +31,7 @@ push(const struct node *x) {
 struct node *
 pop(void) {
 	assert(n > 0);
-	return (struct node *)a[--n];
+	return a[--n];
 }
 
 const struct node *

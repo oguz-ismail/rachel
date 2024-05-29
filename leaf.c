@@ -21,10 +21,10 @@
 
 static int a[8];
 static size_t c[8];
+static size_t n, total;
 #ifndef NDEBUG
 static size_t used[8];
 #endif
-static size_t n, total;
 
 void
 put(int x) {
@@ -76,11 +76,17 @@ use(size_t i) {
 void
 unuse(size_t i) {
 	assert(i < n);
-	assert(used[i] > 0);
 	c[i]++;
 #ifndef NDEBUG
+	assert(used[i] > 0);
 	used[i]--;
 #endif
+}
+
+int
+get(size_t i) {
+	assert(i < n);
+	return a[i];
 }
 
 size_t

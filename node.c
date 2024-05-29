@@ -66,8 +66,8 @@ update(struct node *v) {
 	if (v->type == LEAF)
 		return;
 
-	x = v->left->value;
-	y = v->right->value;
+	x = v->LHS;
+	y = v->RHS;
 
 	switch (v->type) {
 	case ADD:
@@ -102,7 +102,7 @@ symbol(unsigned t) {
 		assert(0);
 	}
 
-	return NULL;
+	return "";
 }
 
 void
@@ -111,18 +111,18 @@ print(const struct node *v, int root) {
 		if (!root)
 			return;
 
-		outn(v->value);
+		OUTN(v->value);
 	}
 	else {
 		print(v->left, 0);
 		print(v->right, 0);
 
-		outn(v->left->value);
-		outs(symbol(v->type));
-		outn(v->right->value);
+		OUTN(v->LHS);
+		OUTS(symbol(v->type));
+		OUTN(v->RHS);
 	}
 
-	outs(" = ");
-	outn(v->value);
-	outs("\n");
+	OUTS(" = ");
+	OUTN(v->value);
+	OUTS("\n");
 }
