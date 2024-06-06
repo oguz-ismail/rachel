@@ -17,12 +17,16 @@
  */
 
 #include <assert.h>
+#ifdef NOLIBC
+#include "libc.h"
+#else
 #include <errno.h>
 #include <stdlib.h>
 #if _WIN32
 #include <io.h>
 #else
 #include <unistd.h>
+#endif
 #endif
 #include "out.h"
 
@@ -52,7 +56,7 @@ print_number(int f, long x) {
 
 	p = &s[sizeof s-1];
 	do {
-		*--p = '0' + x%10;
+		*(--p) = '0' + x%10;
 		x /= 10;
 	}
 	while (x > 0);
