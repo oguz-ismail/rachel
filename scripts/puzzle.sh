@@ -1,8 +1,8 @@
 od -A n -t u1 -v </dev/urandom | awk '{
  for (i = 1; i <= NF; i++) {
 	if (init == 0) {
-		big = $i%5
-		small = 6-big
+		large = $i%5
+		small = 6-large
 		init = 1
 	}
 	else if (small > 0) {
@@ -12,11 +12,15 @@ od -A n -t u1 -v </dev/urandom | awk '{
 			small--
 		}
 	}
-	else if (big > 0) {
+	else if (large == 4) {
+		numbers = numbers "25 50 75 100 "
+		large = 0
+	}
+	else if (large > 0) {
 		x = (1 + $i%4)*25
 		if (seen[x]++ < 1) {
 			numbers = numbers x " "
-			big--
+			large--
 		}
 	}
 	else if (n < 2) {

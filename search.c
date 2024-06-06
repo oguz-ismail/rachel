@@ -44,7 +44,9 @@ search_depth(size_t d) {
 			if (search_depth(d))
 				return 1;
 
+			assert(peek() == &v);
 			pop();
+
 			assert(v.type != LEAF);
 			push(v.left);
 			push(v.right);

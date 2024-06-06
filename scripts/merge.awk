@@ -1,12 +1,12 @@
 seen[FILENAME] == 0 {
 	if (FILENAME == "out.c") {
 		print "#undef n"
-		print "#define n xn"
+		print "#define n an"
 	}
 	else if (FILENAME == "stack.c") {
 		print "#undef n"
-		print "#define a ya"
-		print "#define n yn"
+		print "#define a ba"
+		print "#define n bn"
 	}
 
 	seen[FILENAME] = 1

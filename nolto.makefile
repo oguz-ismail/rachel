@@ -1,11 +1,17 @@
 CFLAGS = -O3 -DNDEBUG
 
-rachel: merged.o
+bin = rachel
+srcs = node.h out.h check.c leaf.c main.c node.c out.c prune.c refine.c \
+	search.c stack.c
+
+all: $(bin)
+
+$(bin): merged.o
 	$(CC) $(LDFLAGS) -o $@ merged.o
 
-merged.c: check.c leaf.c main.c node.c node.h out.c out.h prune.c refine.c \
- search.c stack.c
-	awk -f merge.awk *.h *.c >merged.c
+merged.c: $(srcs)
+	awk -f scripts/merge.awk check.h leaf.h prune.h refine.h search.h \
+		stack.h $(srcs) >merged.c
 
 clean:
-	rm -f rachel merged.c merged.o
+	rm -f $(bin) merged.c merged.o

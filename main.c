@@ -17,10 +17,14 @@
  */
 
 #include <limits.h>
+#ifdef NOLIBC
+#include "libc.h"
+#else
 #if _WIN32
 #include <stdlib.h>
 #else
 #include <unistd.h>
+#endif
 #endif
 #include "leaf.h"
 #include "out.h"

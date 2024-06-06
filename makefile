@@ -1,3 +1,3 @@
-CFLAGS += -O3 -flto
-
 include common.mk
+
+CFLAGS += -O3 -flto
