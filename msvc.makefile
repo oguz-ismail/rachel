@@ -1,14 +1,18 @@
 CFLAGS = /O2 /GL /DNDEBUG
 LDFLAGS = /LTCG
-OBJS = check.obj leaf.obj main.obj node.obj out.obj prune.obj refine.obj \
+
+bin = rachel.exe
+objs = check.obj leaf.obj main.obj node.obj out.obj prune.obj refine.obj \
  search.obj stack.obj
 
-rachel.exe: $(OBJS)
-	link $(LDFLAGS) $(OBJS) /OUT:$@
+all: $(bin)
+
+$(bin): $(objs)
+	link $(LDFLAGS) $(objs) /OUT:$@
 
 node.obj prune.obj refine.obj search.obj: node.h
 
-main.obj node.obj search.obj: out.h
+main.obj node.obj: out.h
 
 clean:
-	del /q rachel.exe $(OBJS)
+	del /q $(bin) $(objs)

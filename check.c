@@ -42,9 +42,9 @@ overflow(const struct node *v) {
 		return x > LONG_MAX-y;
 	case MUL:
 		return x > LONG_MAX/y;
-	default:
-		return 0;
 	}
+
+	return 0;
 }
 
 static const struct node *
@@ -89,10 +89,11 @@ duplication(const struct node *v) {
 }
 
 static int
-myopia(const struct node *v) {
+myopia(void) {
 	size_t i;
-	const struct node *u;
+	const struct node *v, *u;
 
+	v = peek();
 	for (i = -1; (i = next(i)) != -1; ) {
 		u = find(v, get(i));
 		if (u != NULL && u->type != LEAF)
@@ -121,8 +122,8 @@ check(int aux) {
 	if (overflow(v) || duplication(v))
 		return 1;
 
-	if (aux && (myopia(v) || regression(v)))
-		return 1;
+	if (aux)
+		return myopia() || regression(v);
 
 	return 0;
 }
