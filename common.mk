@@ -1,19 +1,20 @@
 CPPFLAGS += -DNDEBUG
 LDFLAGS = $(CFLAGS)
-OBJS = check.o leaf.o main.o node.o out.o prune.o refine.o search.o stack.o
-BIN = rachel
+
+bin = rachel
+objs = check.o leaf.o main.o node.o out.o prune.o refine.o search.o stack.o
 
 .c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
-all: $(BIN)
+all: $(bin)
 
-$(BIN): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS)
+$(bin): $(objs)
+	$(CC) $(LDFLAGS) -o $@ $(objs)
 
 check.o node.o prune.o refine.o search.o: node.h
 
-main.o node.o search.o: out.h
+main.o node.o: out.h
 
 clean:
-	rm -f $(BIN) $(OBJS)
+	rm -f $(bin) $(objs)

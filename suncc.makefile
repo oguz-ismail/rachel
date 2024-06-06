@@ -1,3 +1,3 @@
-CFLAGS += -fast -xipo
-
 include common.mk
+
+CFLAGS += -fast -xipo
