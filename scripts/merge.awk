@@ -17,6 +17,11 @@ seen[FILENAME] == 0 {
 	next
 }
 
+/^struct node;/ {
+	if (seen["node.h"] == 1)
+		next
+}
+
 /^[a-z]/ && (\
 	/\);$/ || (\
 		/[^;{]$/ && !/^static / && FILENAME != "main.c"\
@@ -26,13 +31,8 @@ seen[FILENAME] == 0 {
 	next
 }
 
-/^struct node;/ {
-	if (seen["node.h"] == 1)
-		next
-}
-
 /^#include "/ || (\
-	/^[a-z]/ && /[^)];/ && !/^static /\
+	/^[a-z]/ && /[^)];/ && !/^(static|typedef) /\
 ) {
 	next
 }
