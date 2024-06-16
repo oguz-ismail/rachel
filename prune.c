@@ -28,7 +28,6 @@ prune(unsigned ops) {
 
 	l = lift();
 	r = peek();
-
 	x = l->value;
 	y = r->value;
 	assert(x > 0 && y > 0);

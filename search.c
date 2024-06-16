@@ -25,8 +25,9 @@
 #include "prune.h"
 
 int target;
-static int skip;
 static int oneoff = 1;
+static int skip;
+static int found, leapt;
 
 static int
 search_depth(size_t d) {
@@ -46,7 +47,6 @@ search_depth(size_t d) {
 
 			assert(peek() == &v);
 			pop();
-
 			assert(v.type != LEAF);
 			push(v.left);
 			push(v.right);
@@ -57,7 +57,9 @@ search_depth(size_t d) {
 		if (stack_size() != 1 || peek()->value != target)
 			return 0;
 
-		if (check(!oneoff))
+		found = 1;
+
+		if (check(leapt))
 			return 0;
 
 		if (skip) {
@@ -100,9 +102,12 @@ search(int mode) {
 	}
 
 	n = leaf_count();
-	for (i = 1; i <= n; i++)
+	for (i = 1; i <= n; i++) {
 		if (search_depth(i))
 			return 1;
+
+		leapt = found;
+	}
 
 	return 0;
 }

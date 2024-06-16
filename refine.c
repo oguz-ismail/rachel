@@ -21,12 +21,12 @@
 
 static void
 flip(struct node *v) {
-	struct node *l;
+	struct node *u;
 
 	assert(v->type != LEAF);
-	l = v->left;
+	u = v->left;
 	v->left = v->right;
-	v->right = l;
+	v->right = u;
 }
 
 static struct node *
