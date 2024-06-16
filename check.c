@@ -23,8 +23,10 @@
 #include "stack.h"
 #include "node.h"
 
+typedef const struct node *NODE;
+
 static int
-overflow(const struct node *v) {
+overflow(NODE v) {
 	long x, y;
 
 	if (v->type == LEAF)
@@ -47,29 +49,26 @@ overflow(const struct node *v) {
 	return 0;
 }
 
-static const struct node *
-find(const struct node *v, long x) {
-	const struct node *u;
+static int
+find(long x, NODE v, NODE *p) {
+	if (v->value == x) {
+		if (p != NULL)
+			*p = v;
 
-	if (v->value == x)
-		return v;
+		return 1;
+	}
 
 	if (v->type == LEAF)
-		return NULL;
+		return 0;
 
-	u = find(v->left, x);
-	if (u != NULL)
-		return u;
-
-	return find(v->right, x);
+	return find(x, v->left, p) || find(x, v->right, p);
 }
 
 static int
-sift(const struct node *v, const struct node *u) {
-	const struct node *w;
+sift(NODE v, NODE u) {
+	NODE w;
 
-	w = find(u, v->value);
-	if (w != NULL && v->type > w->type)
+	if (find(v->value, u, &w) && v->type > w->type)
 		return 1;
 
 	if (v->type == LEAF)
@@ -79,24 +78,23 @@ sift(const struct node *v, const struct node *u) {
 }
 
 static int
-duplication(const struct node *v) {
+duplication(NODE v) {
 	if (v->type == LEAF)
 		return 0;
 
-	return sift(v->left, v->right) ||
-		duplication(v->left) ||
-		duplication(v->right);
+	return sift(v->left, v->right)
+		|| duplication(v->left)
+		|| duplication(v->right);
 }
 
 static int
-myopia(void) {
+shortsight(void) {
+	NODE v, u;
 	size_t i;
-	const struct node *v, *u;
 
 	v = peek();
 	for (i = -1; (i = next(i)) != -1; ) {
-		u = find(v, get(i));
-		if (u != NULL && u->type != LEAF)
+		if (find(get(i), v, &u) && u->type != LEAF)
 			return 1;
 	}
 
@@ -104,26 +102,26 @@ myopia(void) {
 }
 
 static int
-regression(const struct node *v) {
+regression(NODE v) {
 	if (v->type == LEAF)
 		return 0;
 
-	return find(v->left, v->value) != NULL ||
-		find(v->right, v->value) != NULL ||
-		regression(v->left) ||
-		regression(v->right);
+	return find(v->value, v->left, NULL)
+		|| find(v->value, v->right, NULL)
+		|| regression(v->left)
+		|| regression(v->right);
 }
 
 int
 check(int aux) {
-	const struct node *v;
+	NODE v;
 
 	v = peek();
 	if (overflow(v) || duplication(v))
 		return 1;
 
 	if (aux)
-		return myopia() || regression(v);
+		return shortsight() || regression(v);
 
 	return 0;
 }

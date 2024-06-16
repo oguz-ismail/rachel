@@ -71,17 +71,18 @@ flush(int f) {
 
 	for (i = 0; i < n[f]; i += k) {
 		k = write(fd[f], &buf[f][i], n[f]-i);
-		if (k == -1) {
-			if (errno == EINTR) {
-				k = 0;
-				continue;
-			}
+		if (k != -1)
+			continue;
 
-			if (f != ERR)
-				print_string(ERR, "write error\n");
-
-			_exit(2);
+		if (errno == EINTR) {
+			k = 0;
+			continue;
 		}
+
+		if (f != ERR)
+			print_string(ERR, "write error\n");
+
+		_exit(2);
 	}
 
 	n[f] = 0;

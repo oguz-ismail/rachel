@@ -20,43 +20,43 @@
 #include <stddef.h>
 
 static int a[8];
-static size_t c[8];
-static size_t n, total;
+static size_t n;
+static size_t avail[8], total;
 #ifndef NDEBUG
 static size_t used[8];
 #endif
 
 void
 put(int x) {
-	size_t i, j;
+	size_t i, pos;
 
 	total++;
 
-	j = n;
+	pos = n;
 	for (i = n; i-- > 0; )
 		if (x == a[i]) {
-			c[i]++;
+			avail[i]++;
 			return;
 		}
 		else if (x > a[i]) {
-			j = i;
+			pos = i;
 		}
 
 	assert(n < sizeof a/sizeof a[0]);
-	for (i = n; i > j; i--) {
+	for (i = n; i > pos; i--) {
 		a[i] = a[i-1];
-		c[i] = c[i-1];
+		avail[i] = avail[i-1];
 	}
 
-	a[j] = x;
-	c[j] = 1;
+	a[pos] = x;
+	avail[pos] = 1;
 	n++;
 }
 
 size_t
 next(size_t i) {
 	while (++i < n)
-		if (c[i] != 0)
+		if (avail[i] != 0)
 			return i;
 
 	return -1;
@@ -65,8 +65,8 @@ next(size_t i) {
 int
 use(size_t i) {
 	assert(i < n);
-	assert(c[i] > 0);
-	c[i]--;
+	assert(avail[i] > 0);
+	avail[i]--;
 #ifndef NDEBUG
 	used[i]++;
 #endif
@@ -76,7 +76,7 @@ use(size_t i) {
 void
 unuse(size_t i) {
 	assert(i < n);
-	c[i]++;
+	avail[i]++;
 #ifndef NDEBUG
 	assert(used[i] > 0);
 	used[i]--;
