@@ -18,7 +18,9 @@ $(bin): $(libc)
 
 $(libc): $(libc:.o=.s)
 
-stripped: $(bin)
+strip: $(bin)
 	objcopy -S -j .rodata -j .bss -j .data.rel.ro -j .text \
 		-j .note.ABI-tag -j .note.netbsd.ident -j .note.openbsd.ident \
 		$(bin) $(bin)
+	ls -l $(bin)
+	size $(bin)
