@@ -3,10 +3,10 @@
 .global _start
 .global write
 
-.data
+.bss
 
 errno:
-	.word 0
+	.word
 
 .text
 
@@ -15,8 +15,8 @@ _exit:
 	syscall
 
 _start:
-	mov (%rdi), %edi
 	lea 8(%rdi), %rsi
+	mov (%rdi), %edi
 	call main
 	mov %eax, %edi
 	call _exit

@@ -7,7 +7,7 @@ while true; do
 	out2=$("$2" $args 2>&1)
 	ret2=$?
 	if test $ret1 -ne $ret2; then
-		echo statuses differ: $ret1 vs $ret2
+		echo exit values differ: $ret1 vs $ret2
 		exit 1
 	fi
 
@@ -38,3 +38,5 @@ while true; do
 
 	echo
 done
+
+# vim: ft=sh
