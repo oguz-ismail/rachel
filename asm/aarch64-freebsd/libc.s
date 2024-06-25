@@ -11,25 +11,29 @@ errno:
 .text
 
 _exit:
-	mov w8, 93
+	mov w8, 1
 	svc 0
 
 _start:
-	ldr w0, [sp]
-	add x1, sp, 8
+	add x1, x0, 8
+	ldr w0, [x0]
 	bl main
 	b _exit
 
 write:
-	mov w8, 64
+	mov w8, 4
 	svc 0
-	tbnz w0, 31, .err
+	bcs .err
 	ret
 .err:
-	neg w0, w0
 	adrp x1, errno
 	str w0, [x1, :lo12:errno]
 	mov w0, -1
 	ret
+
+.section .note.ABI-tag, "a"
+.long 8, 4, 1
+.string "FreeBSD"
+.long 0
 
 .section .note.GNU-stack, ""

@@ -3,10 +3,10 @@
 .global _start
 .global write
 
-.data
+.bss
 
 errno:
-	.word 0
+	.word
 
 .text
 
