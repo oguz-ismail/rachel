@@ -1,7 +1,8 @@
 #include <errno.h>
-#undef errno
+#include <stddef.h>
 
+#undef errno
 extern int errno;
 
 _Noreturn void _exit(int);
-int write(int, void *, unsigned);
+int write(int, const void *, size_t);

@@ -1,12 +1,15 @@
+BEGIN {
+	pfx["leaf.c"] = "a"
+	pfx["out.c"] = "b"
+	pfx["stack.c"] = "c"
+}
+
 seen[FILENAME] == 0 {
-	if (FILENAME == "out.c") {
+	if (pfx[FILENAME] != "") {
+		print "#undef a"
 		print "#undef n"
-		print "#define n an"
-	}
-	else if (FILENAME == "stack.c") {
-		print "#undef n"
-		print "#define a ba"
-		print "#define n bn"
+		print "#define a " pfx[FILENAME] "a"
+		print "#define n " pfx[FILENAME] "n"
 	}
 
 	seen[FILENAME] = 1
