@@ -1,5 +1,5 @@
 CPPFLAGS += -DNDEBUG
-LDFLAGS = $(CFLAGS)
+LDFLAGS += $(CFLAGS)
 
 bin = rachel
 objs = check.o leaf.o main.o node.o out.o prune.o refine.o search.o stack.o
