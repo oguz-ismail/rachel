@@ -17,6 +17,7 @@
  */
 
 #include <assert.h>
+#include <stddef.h>
 #ifdef NOLIBC
 #include "libc.h"
 #else
