@@ -55,15 +55,34 @@ invert(struct node *v, struct node **e, unsigned t) {
 }
 
 struct node *
-refine(struct node *v) {
-	struct node *l;
+reunite(struct node *v) {
+	struct node *l, *u;
+
+	switch (v->type) {
+	case ADD:
+	case MUL:
+		l = v->left;
+		if (l->type != v->type)
+			break;
+
+		if (l->LHS == v->RHS)
+			u = rotate(v, &l->left);
+		else if (l->RHS == v->RHS)
+			u = rotate(v, &l->right);
+		else
+			break;
+
+		update(v);
+		return u;
+	}
+
+	return v;
+}
+
+struct node *
+order(struct node *v) {
+	struct node *l, *u;
 	long x, y;
-
-	if (v->type == LEAF)
-		return v;
-
-	v->left = refine(v->left);
-	v->right = refine(v->right);
 
 	l = v->left;
 	x = v->LHS;
@@ -80,15 +99,14 @@ refine(struct node *v) {
 			break;
 
 		if (l->RHS > y)
-			l = rotate(v, &l->right);
+			u = rotate(v, &l->right);
 		else if (l->RHS < y)
-			l = invert(v, &l->right, SUB);
+			u = invert(v, &l->right, SUB);
 		else
 			break;
 
 		update(v);
-		v = l;
-		break;
+		return u;
 	case MUL:
 		if (x > y && (y%5 != 0 || x%5 == 0))
 			flip(v);
@@ -99,20 +117,30 @@ refine(struct node *v) {
 			break;
 
 		if (l->LHS % y == 0)
-			l = rotate(v, &l->left);
+			u = rotate(v, &l->left);
 		else if (y % l->LHS == 0)
-			flip(l = invert(v, &l->left, DIV));
+			flip(u = invert(v, &l->left, DIV));
 		else if (l->RHS % y == 0)
-			l = rotate(v, &l->right);
+			u = rotate(v, &l->right);
 		else if (y % l->RHS == 0)
-			l = invert(v, &l->right, DIV);
+			u = invert(v, &l->right, DIV);
 		else
 			break;
 
 		update(v);
-		v = l;
-		break;
+		return u;
 	}
 
 	return v;
+}
+
+struct node *
+refine(struct node *v) {
+	if (v->type == LEAF)
+		return v;
+
+	v->left = refine(v->left);
+	v->right = refine(v->right);
+
+	return order(reunite(v));
 }
