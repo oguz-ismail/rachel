@@ -78,19 +78,18 @@ main(int argc, char *argv[]) {
 	skip = -1;
 	for (i = 1; i < argc; i++) {
 		p = argv[i];
-
-		if (*p++ != '-')
+		if (*p != '-')
 			break;
 
-		if (*p == '-') {
+		if (*++p == '-') {
 			i++;
 			break;
 		}
 
-		if (*p++ != 's' || (*p == '\0' && i >= argc-1)) {
+		if (*p != 's' || (*++p == '\0' && i >= argc-1)) {
 			ERRS("Usage: "
 				"rachel [-s skip_count] numbers target\n");
-			return 2;
+			_exit(2);
 		}
 
 		if (*p == '\0')
