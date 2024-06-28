@@ -74,7 +74,7 @@ sift(NODE v, NODE u) {
 	if (v->type == LEAF)
 		return 0;
 
-	return sift(v->left, u) || sift(v->right, u);
+	return sift(v->right, u) || sift(v->left, u);
 }
 
 static int

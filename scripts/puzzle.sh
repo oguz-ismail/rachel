@@ -24,7 +24,7 @@ od -A n -t u1 -v </dev/urandom | awk '{
 		}
 	}
 	else if (n < 2) {
-		target = target*255 + $i
+		target = target*256 + $i
 		n++
 	}
 	else {
