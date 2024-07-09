@@ -31,14 +31,14 @@ static int found, leapt;
 
 static int
 search_depth(size_t d) {
-	unsigned mask, t;
+	unsigned try, t;
 	struct node v, *answer;
 	size_t i;
 
 	if (stack_size() >= 2) {
-		mask = prune(LEAF-1);
+		try = prune(LEAF-1);
 		for (t = 1; t < LEAF; t <<= 1) {
-			if (!(mask & t) || !make(&v, t))
+			if (!(t & try) || !make(&v, t))
 				continue;
 
 			push(&v);
