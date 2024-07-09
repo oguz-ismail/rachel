@@ -23,6 +23,8 @@
 #include "stack.h"
 #include "node.h"
 
+#define COMMUT(t) ((t) & (ADD|MUL))
+
 typedef const struct node *NODE;
 
 static int
@@ -112,6 +114,67 @@ regression(NODE v) {
 		|| regression(v->right);
 }
 
+static int
+branch(long x, unsigned match, unsigned follow, NODE v) {
+	if (v->type & match)
+		if (v->RHS == x || (COMMUT(v->type) && v->LHS == x))
+			return 1;
+
+	if (v->type == LEAF || !(v->type & follow))
+		return 0;
+
+	if (branch(x, match, follow, v->left))
+		return 1;
+
+	if (!COMMUT(v->type))
+		match ^= follow;
+
+	return branch(x, match, follow, v->right);
+}
+
+static int
+half(long x, unsigned match, unsigned follow, NODE v) {
+	if (x%2 == 0 && branch(x/2, match, follow, v))
+		return 1;
+
+	return branch(x, match, follow, v)
+		|| branch(2*x, match, follow, v);
+}
+
+static int
+detour(NODE v) {
+	int (*f)(long, unsigned, unsigned, NODE);
+	unsigned pair, t[2];
+
+	if (v->type == LEAF)
+		return 0;
+
+	if (detour(v->left) || detour(v->right))
+		return 1;
+
+	f = branch;
+	switch (v->type) {
+	case ADD:
+	case SUB:
+		f = half;
+		pair = ADD|SUB;
+		break;
+	case MUL:
+	case DIV:
+		pair = MUL|DIV;
+		break;
+	default:
+		return 0;
+	}
+
+	t[0] = t[1] = v->type^pair;
+	if (!COMMUT(v->type))
+		t[1] ^= pair;
+
+	return f(v->RHS, t[0], pair, v->left)
+		|| f(v->LHS, t[1], pair, v->right);
+}
+
 int
 check(int aux) {
 	NODE v;
@@ -121,7 +184,7 @@ check(int aux) {
 		return 1;
 
 	if (aux)
-		return shortsight() || regression(v);
+		return shortsight() || regression(v) || detour(v);
 
 	return 0;
 }
