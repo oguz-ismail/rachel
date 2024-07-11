@@ -7,8 +7,9 @@ include common.mk
 
 CPPFLAGS += -DNOLIBC
 CFLAGS += -O3 -fno-tree-vectorize -flto -nostdlib -fno-builtin \
-	-fno-unwind-tables -fno-asynchronous-unwind-tables
-LDFLAGS += -static -fno-pie -Wl,-z,norelro
+	-fno-stack-protector -fno-pie -fno-unwind-tables \
+	-fno-asynchronous-unwind-tables
+LDFLAGS += -static -no-pie -Wl,-z,norelro
 
 target != scripts/target.sh $(CC)
 libc = asm/$(target)/libc.o

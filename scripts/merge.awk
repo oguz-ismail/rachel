@@ -34,9 +34,8 @@ seen[FILENAME] == 0 {
 	next
 }
 
-/^#include "/ || (\
-	/^[a-z]/ && /[^)];/ && !/^(static|typedef) /\
-) {
+(/^#include "/ && !/libc\.h/) ||\
+(/^[a-z]/ && /[^)];/ && !/^(static|typedef) /) {
 	next
 }
 

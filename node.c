@@ -98,8 +98,6 @@ symbol(unsigned t) {
 		return " * ";
 	case DIV:
 		return " / ";
-	default:
-		assert(0);
 	}
 
 	return "";
