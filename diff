@@ -1,25 +1,25 @@
-max=200
 count() {
 	n=0
 	while "$1" -s $n $args >/dev/null 2>&1; do
 		if test $((n += 1)) -ge $max; then
-			n=$max+
 			break
 		fi
 	done
 	echo $n
 }
 
+max=200
+
 while true; do
-	args=$(scripts/puzzle.sh)
+	args=$(./puzzle.sh)
 	echo $args
 
 	out1=x$("$1" $args 2>&1)
-	ret1=$?
+	rc1=$?
 	out2=x$("$2" $args 2>&1)
-	ret2=$?
-	if test $ret1 -ne $ret2; then
-		echo exit values differ: $ret1 vs $ret2
+	rc2=$?
+	if test $rc1 -ne $rc2; then
+		echo exit values differ: $rc1 vs $rc2
 		exit 1
 	fi
 
@@ -42,4 +42,5 @@ while true; do
 
 	echo
 done
+
 # vim: ft=sh
