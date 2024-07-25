@@ -1,23 +1,20 @@
 include common.mk
 
-.SUFFIXES: .s
-
-.s.o:
-	$(CC) -c -o $@ $<
-
 CPPFLAGS += -DNOLIBC
 CFLAGS += -O3 -fno-tree-vectorize -flto -nostdlib -fno-builtin \
 	-fno-stack-protector -fno-pie -fno-unwind-tables \
 	-fno-asynchronous-unwind-tables
 LDFLAGS += -static -no-pie -Wl,-z,norelro
+objs += libc.o
 
-target != scripts/target.sh $(CC)
-libc = asm/$(target)/libc.o
-objs += $(libc)
+.SUFFIXES: .S
 
-$(bin): $(libc)
+.S.o:
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(libc): $(libc:.o=.s)
+libc.o: libc.S
+
+$(bin): libc.o
 
 strip: $(bin)
 	objcopy -S -j .rodata -j .bss -j .data.rel.ro -j .text \

@@ -16,7 +16,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
 #include <stddef.h>
 #ifdef NOLIBC
 #include "libc.h"
@@ -31,7 +30,7 @@
 #endif
 #include "out.h"
 
-static char a[128];
+static char a[80];
 static size_t n;
 
 static void
@@ -48,7 +47,7 @@ buffer(const char *p) {
 }
 
 static void
-full_write(int fd, const char *buf, size_t len, int retry) {
+write_all(int fd, const char *buf, size_t len, int retry) {
 	size_t i, ret;
 
 	for (i = 0; i < len; i += ret) {
@@ -77,7 +76,7 @@ print_string(int fd, const char *s) {
 	}
 	else {
 		for (len = 0; s[len] != '\0'; len++);
-		full_write(fd, s, len, 0);
+		write_all(fd, s, len, 0);
 	}
 }
 
@@ -98,6 +97,6 @@ print_number(int fd, long x) {
 
 void
 flush(void) {
-	full_write(1, a, n, 1);
+	write_all(1, a, n, 1);
 	n = 0;
 }

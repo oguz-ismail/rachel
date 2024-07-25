@@ -1,0 +1,9 @@
+set -x
+./rachel 1 1 2
+./rachel 1 1 1 3
+./rachel -s 1 2 2 4
+./rachel
+./rachel -x
+./rachel -s x
+./rachel 1 1 >&-
+./rachel 1 2
