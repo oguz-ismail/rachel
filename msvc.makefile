@@ -1,4 +1,4 @@
-CFLAGS = /O2 /GL /DNDEBUG
+CFLAGS = /O2 /GL /DNDEBUG $(xflags)
 LDFLAGS = /LTCG
 
 bin = rachel.exe
@@ -12,7 +12,7 @@ $(bin): $(objs)
 
 node.obj prune.obj refine.obj search.obj: node.h
 
-main.obj node.obj: out.h
+main.obj node.obj: os.h
 
 clean:
 	del /q $(bin) $(objs)

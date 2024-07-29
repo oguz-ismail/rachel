@@ -17,17 +17,8 @@
  */
 
 #include <limits.h>
-#ifdef NOLIBC
-#include "libc.h"
-#else
-#if _WIN32
-#include <stdlib.h>
-#else
-#include <unistd.h>
-#endif
-#endif
 #include "leaf.h"
-#include "out.h"
+#include "os.h"
 #include "search.h"
 
 #define SPACE(c) ((c) == ' ' || (c) == '\t')
@@ -63,10 +54,10 @@ number(const char *s, int min) {
 
 	return x;
 err:
-	ERRS("bad number: ");
-	ERRS(s);
-	ERRS("\n");
-	_exit(2);
+	EPRTS("bad number: ");
+	EPRTS(s);
+	EPRTS("\n");
+	EXIT(2);
 }
 
 int
@@ -87,9 +78,9 @@ main(int argc, char *argv[]) {
 		}
 
 		if (*p != 's' || (*++p == '\0' && i >= argc-1)) {
-			ERRS("Usage: "
+			EPRTS("Usage: "
 				"rachel [-s skip_count] numbers target\n");
-			_exit(2);
+			EXIT(2);
 		}
 
 		if (*p == '\0')
@@ -102,7 +93,7 @@ main(int argc, char *argv[]) {
 	argv += i;
 
 	if (argc < 2 || argc > 7) {
-		ERRS("fewer/more operands than expected\n");
+		EPRTS("fewer/more operands than expected\n");
 		return 2;
 	}
 
@@ -111,9 +102,17 @@ main(int argc, char *argv[]) {
 
 	target = number(argv[i], 1);
 	if (!search(skip)) {
-		ERRS("no answer\n");
+		EPRTS("no answer\n");
 		return 1;
 	}
+
+#ifdef GENERIC
+	fflush(NULL);
+	if (ferror(stdout)) {
+		EPRTS("write error\n");
+		return 2;
+	}
+#endif
 
 	return 0;
 }
