@@ -1,6 +1,6 @@
 include common.mk
 
-CPPFLAGS += -DNOLIBC
+CPPFLAGS += -DSTATIC
 CFLAGS += -O3 -fno-tree-vectorize -flto -nostdlib -fno-builtin \
 	-fno-stack-protector -fno-pie -fno-unwind-tables \
 	-fno-asynchronous-unwind-tables

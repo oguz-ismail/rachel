@@ -16,8 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef GENERIC
 #include <stddef.h>
-#ifdef NOLIBC
+#ifdef STATIC
 #include "libc.h"
 #else
 #include <errno.h>
@@ -28,10 +29,12 @@
 #include <unistd.h>
 #endif
 #endif
-#include "out.h"
 
 static char a[80];
 static size_t n;
+
+void print_string(int, const char *);
+void flush(void);
 
 static void
 buffer(const char *p) {
@@ -60,9 +63,10 @@ write_all(int fd, const char *buf, size_t len, int retry) {
 			continue;
 		}
 
-		if (fd != 2)
-			print_string(2, "write error\n");
+		if (fd != 1)
+			break;
 
+		print_string(2, "write error\n");
 		_exit(2);
 	}
 }
@@ -100,3 +104,4 @@ flush(void) {
 	write_all(1, a, n, 1);
 	n = 0;
 }
+#endif
