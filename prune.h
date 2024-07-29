@@ -1,1 +1,1 @@
-unsigned prune(unsigned);
+int prune(int);

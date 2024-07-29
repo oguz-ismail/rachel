@@ -14,7 +14,7 @@ $(bin): $(objs)
 
 check.o node.o prune.o refine.o search.o: node.h
 
-main.o node.o: out.h
+main.o node.o: os.h
 
 clean:
 	rm -f $(bin) $(objs)
