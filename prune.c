@@ -21,8 +21,8 @@
 #include "node.h"
 #include "prune.h"
 
-unsigned
-prune(unsigned ops) {
+int
+prune(int ops) {
 	const struct node *l, *r;
 	long x, y;
 

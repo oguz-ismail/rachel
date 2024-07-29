@@ -115,7 +115,7 @@ regression(NODE v) {
 }
 
 static int
-branch(long x, unsigned match, unsigned follow, NODE v) {
+branch(long x, int match, int follow, NODE v) {
 	if (v->type & match)
 		if (v->RHS == x || (COMMUT(v->type) && v->LHS == x))
 			return 1;
@@ -133,7 +133,7 @@ branch(long x, unsigned match, unsigned follow, NODE v) {
 }
 
 static int
-half(long x, unsigned match, unsigned follow, NODE v) {
+half(long x, int match, int follow, NODE v) {
 	if (x%2 == 0 && branch(x/2, match, follow, v))
 		return 1;
 
@@ -143,8 +143,8 @@ half(long x, unsigned match, unsigned follow, NODE v) {
 
 static int
 detour(NODE v) {
-	int (*f)(long, unsigned, unsigned, NODE);
-	unsigned pair, t[2];
+	int (*fn)(long, int, int, NODE);
+	int pair, t[2];
 
 	if (v->type == LEAF)
 		return 0;
@@ -152,11 +152,11 @@ detour(NODE v) {
 	if (detour(v->left) || detour(v->right))
 		return 1;
 
-	f = branch;
+	fn = branch;
 	switch (v->type) {
 	case ADD:
 	case SUB:
-		f = half;
+		fn = half;
 		pair = ADD|SUB;
 		break;
 	case MUL:
@@ -167,12 +167,12 @@ detour(NODE v) {
 		return 0;
 	}
 
-	t[0] = t[1] = v->type^pair;
+	t[0] = t[1] = pair^v->type;
 	if (!COMMUT(v->type))
-		t[1] ^= pair;
+		t[1] = v->type;
 
-	return f(v->RHS, t[0], pair, v->left)
-		|| f(v->LHS, t[1], pair, v->right);
+	return fn(v->RHS, t[0], pair, v->left)
+		|| fn(v->LHS, t[1], pair, v->right);
 }
 
 int
