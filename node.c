@@ -17,12 +17,12 @@
  */
 
 #include <assert.h>
+#include "os.h"
 #include "stack.h"
 #include "node.h"
-#include "out.h"
 
 int
-make(struct node *v, unsigned t) {
+make(struct node *v, int t) {
 	long x, y;
 
 	x = lift()->value;
@@ -88,7 +88,7 @@ update(struct node *v) {
 }
 
 static const char *
-symbol(unsigned t) {
+symbol(int t) {
 	switch (t) {
 	case ADD:
 		return " + ";
@@ -109,18 +109,18 @@ print(const struct node *v, int root) {
 		if (!root)
 			return;
 
-		OUTN(v->value);
+		PRTN(v->value);
 	}
 	else {
 		print(v->left, 0);
 		print(v->right, 0);
 
-		OUTN(v->LHS);
-		OUTS(symbol(v->type));
-		OUTN(v->RHS);
+		PRTN(v->LHS);
+		PRTS(symbol(v->type));
+		PRTN(v->RHS);
 	}
 
-	OUTS(" = ");
-	OUTN(v->value);
-	OUTS("\n");
+	PRTS(" = ");
+	PRTN(v->value);
+	PRTS("\n");
 }

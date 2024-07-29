@@ -1,7 +1,7 @@
-CFLAGS = -O3 -DNDEBUG
+CFLAGS = -O3 -DNDEBUG $(xflags)
 
 bin = rachel
-srcs = node.h out.h check.c leaf.c main.c node.c out.c prune.c refine.c \
+srcs = node.h os.h check.c leaf.c main.c node.c out.c prune.c refine.c \
 	search.c stack.c
 
 all: $(bin)

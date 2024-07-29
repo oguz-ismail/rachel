@@ -44,7 +44,7 @@ rotate(struct node *v, struct node **e) {
 }
 
 static struct node *
-invert(struct node *v, struct node **e, unsigned t) {
+invert(struct node *v, struct node **e, int t) {
 	struct node *u;
 
 	u = rotate(v, e);

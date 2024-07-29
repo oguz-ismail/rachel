@@ -31,7 +31,7 @@ static int found, leapt;
 
 static int
 search_depth(size_t d) {
-	unsigned try, t;
+	int try, t;
 	struct node v, *answer;
 	size_t i;
 
