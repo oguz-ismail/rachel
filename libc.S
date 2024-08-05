@@ -41,6 +41,9 @@ _exit:
 #elif __powerpc64__ && __linux__
 	li %r0, 1
 	sc
+#elif __s390x__ && __linux__
+	lghi %r1, 1
+	svc 0
 #endif
 
 _start:
@@ -99,9 +102,15 @@ _start:
 	addi %r2, %r2, .TOC.-_start@l
 	lwz %r3, 0(%r1)
 	addi %r4, %r1, 8
-	stdu %r1, -16(%r1)
+	stdu %r1, -128(%r1)
 	bl main
 	b _exit
+#elif __s390x__ && __linux__
+	lg %r2, 0(%r15)
+	la %r3, 8(%r15)
+	aghi %r15, -176
+	brasl %r14, main
+	j _exit
 #else
 #error target not supported
 #endif
@@ -110,35 +119,35 @@ write:
 #if __aarch64__ && __FreeBSD__
 	mov w8, 4
 	svc 0
-	bcs .err
+	bcs .Lerr
 	ret
 #elif __aarch64__ && __linux__
 	mov w8, 64
 	svc 0
-	tbnz w0, 31, .err
+	tbnz w0, 31, .Lerr
 	ret
 #elif __aarch64__ && __NetBSD__
 	mov w17, 4
 	svc 0
-	bcs .err
+	bcs .Lerr
 	ret
 #elif __aarch64__ && __OpenBSD__
 	mov w8, 4
 	svc 0
 	dsb nsh
 	isb
-	bcs .err
+	bcs .Lerr
 	ret
 #elif __amd64__ && (__FreeBSD__ || __NetBSD__ || __OpenBSD__ || __sun__)
 	mov $4, %eax
 	syscall
-	jc .err
+	jc .Lerr
 	ret
 #elif __amd64__ && __linux__
 	mov $1, %eax
 	syscall
 	test %eax, %eax
-	js .err
+	js .Lerr
 	ret
 #elif __arm__ && __FreeBSD__
 	mov ip, r7
@@ -169,20 +178,27 @@ write:
 	pop %ecx
 	pop %ebx
 	test %eax, %eax
-	js .err
+	js .Lerr
 	ret
 #elif __i386__ && __sun__
 	mov $4, %eax
 	int $145
-	jc .err
+	jc .Lerr
 	ret
 #elif __powerpc64__ && __linux__
 	li %r0, 4
 	sc
-	bso- .err
+	bso- .Lerr
 	blr
+#elif __s390x__ && __linux__
+	lghi %r1, 4
+	svc 0
+	lghi %r0, -4095
+	clgr %r2, %r0
+	jgnl .Lerr
+	br %r14
 #endif
-.err:
+.Lerr:
 #if __aarch64__ && (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
 	adrp x1, errno
 	str w0, [x1, :lo12:errno]
@@ -224,9 +240,12 @@ write:
 	stw %r3, 0(%r4)
 	li %r3, -1
 	blr
+#elif __s390x__ && __linux__
+	lcr %r2, %r2
+	strl %r2, errno
+	lhi %r2, -1
+	br %r14
 #endif
-
-.section .note.GNU-stack, ""
 
 #if __arm__
 #include "div.s"
