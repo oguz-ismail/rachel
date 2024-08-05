@@ -1,3 +1,3 @@
 include common.mk
 
-CFLAGS += -fast -xipo
+CFLAGS += -fast -xipo -xvector=%none
