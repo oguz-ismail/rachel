@@ -22,17 +22,17 @@
 
 __aeabi_idiv:
 	cmp r0, #0
-	bge .num_pos
+	bge .Lnum_pos
 	rsbs r0, r0, #0
 	cmp r1, #0
-	bge .neg_result
+	bge .Lneg_result
 	rsbs r1, r1, #0
 	b __aeabi_uidivmod
-.num_pos:
+.Lnum_pos:
 	cmp r1, #0
 	bge __aeabi_uidivmod
 	rsbs r1, r1, #0
-.neg_result:
+.Lneg_result:
 	push {lr}
 	bl __aeabi_uidivmod
 	rsbs r0, r0, #0
@@ -40,22 +40,22 @@ __aeabi_idiv:
 
 __aeabi_idivmod:
 	cmp r0, #0
-	bge .num_pos_bis
+	bge .Lnum_pos_bis
 	rsbs r0, r0, #0
 	cmp r1, #0
-	bge .neg_both
+	bge .Lneg_both
 	rsbs r1, r1, #0
 	push {lr}
 	bl __aeabi_uidivmod
 	rsbs r1, r1, #0
 	pop {pc}
-.neg_both:
+.Lneg_both:
 	push {lr}
 	bl __aeabi_uidivmod
 	rsbs r0, r0, #0
 	rsbs r1, r1, #0
 	pop {pc}
-.num_pos_bis:
+.Lnum_pos_bis:
 	cmp r1, #0
 	bge __aeabi_uidivmod
 	rsbs r1, r1, #0
@@ -67,30 +67,30 @@ __aeabi_idivmod:
 __aeabi_uidiv:
 __aeabi_uidivmod:
 	cmp r1, #0
-	bne .no_div0
+	bne .Lno_div0
 	b __aeabi_idiv0
-.no_div0:
+.Lno_div0:
 	movs r2, #1
 	movs r3, #0
 	cmp r0, r1
-	bls .sub_loop0
+	bls .Lsub_loop0
 	adds r1, #0
-	bmi .sub_loop0
-.denom_shift_loop:
+	bmi .Lsub_loop0
+.Ldenom_shift_loop:
 	lsls r2, #1
 	lsls r1, #1
-	bmi .sub_loop0
+	bmi .Lsub_loop0
 	cmp r0, r1
-	bhi .denom_shift_loop
-.sub_loop0:
+	bhi .Ldenom_shift_loop
+.Lsub_loop0:
 	cmp r0, r1
-	bcc .dont_sub0
+	bcc .Ldont_sub0
 	subs r0, r1
 	orrs r3, r2
-.dont_sub0:
+.Ldont_sub0:
 	lsrs r1, #1
 	lsrs r2, #1
-	bne .sub_loop0
+	bne .Lsub_loop0
 	mov r1, r0
 	mov r0, r3
 	bx lr

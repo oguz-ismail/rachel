@@ -4,7 +4,7 @@ CPPFLAGS += -DSTATIC
 CFLAGS += -O3 -fno-tree-vectorize -flto -nostdlib -fno-builtin \
 	-fno-stack-protector -fno-pie -fno-unwind-tables \
 	-fno-asynchronous-unwind-tables
-LDFLAGS += -static -no-pie -Wl,-z,norelro
+LDFLAGS += -static -no-pie -Wl,-z,norelro -Wl,-z,noexecstack
 objs += libc.o
 
 .SUFFIXES: .S
