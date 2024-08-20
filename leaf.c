@@ -21,25 +21,25 @@
 
 static int a[8];
 static size_t n;
-static size_t avail[8], total;
+static size_t total, avail[8];
 #ifndef NDEBUG
 static size_t used[8];
 #endif
 
 void
-put(int x) {
+save(int x) {
 	size_t i, pos;
 
 	total++;
 
 	pos = n;
 	for (i = n; i-- > 0; )
-		if (x == a[i]) {
+		if (x > a[i]) {
+			pos = i;
+		}
+		else if (x == a[i]) {
 			avail[i]++;
 			return;
-		}
-		else if (x > a[i]) {
-			pos = i;
 		}
 
 	assert(n < sizeof a/sizeof a[0]);
@@ -84,7 +84,7 @@ unuse(size_t i) {
 }
 
 int
-get(size_t i) {
+load(size_t i) {
 	assert(i < n);
 	return a[i];
 }
