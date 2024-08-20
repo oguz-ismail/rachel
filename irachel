@@ -39,7 +39,7 @@ while true; do
 
 	args=`echo $* | sed 's/ [^ ]*$//'`
 	target=`echo $* | sed 's/.* //'`
-	high=`expr $target + 1` low=`expr $target - 1`
+	low=`expr $target - 1` high=`expr $target + 1`
 
 	while true; do
 		echo "try again? [+] $high, [-] $low, [new target], [n]o" >&2

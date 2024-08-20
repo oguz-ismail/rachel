@@ -28,7 +28,6 @@ make(struct node *v, int t) {
 	x = lift()->value;
 	y = peek()->value;
 	assert(x > 0 && y > 0);
-
 	switch (t) {
 	case ADD:
 		v->value = x+y;
@@ -43,7 +42,7 @@ make(struct node *v, int t) {
 		v->value = x*y;
 		break;
 	case DIV:
-		if (x < y || x%y != 0)
+		if (x < y || !DIVIS(x, y))
 			return 0;
 
 		v->value = x/y;
@@ -55,7 +54,6 @@ make(struct node *v, int t) {
 	v->type = t;
 	v->right = pop();
 	v->left = pop();
-
 	return 1;
 }
 
@@ -68,7 +66,6 @@ update(struct node *v) {
 
 	x = v->LHS;
 	y = v->RHS;
-
 	switch (v->type) {
 	case ADD:
 		v->value = x+y;
@@ -81,7 +78,7 @@ update(struct node *v) {
 		v->value = x*y;
 		break;
 	case DIV:
-		assert(x >= y && x%y == 0);
+		assert(x >= y && DIVIS(x, y));
 		v->value = x/y;
 		break;
 	}
@@ -105,22 +102,21 @@ symbol(int t) {
 
 void
 print(const struct node *v, int root) {
-	if (v->type == LEAF) {
-		if (!root)
-			return;
-
-		PRTN(v->value);
-	}
-	else {
+	if (v->type != LEAF) {
 		print(v->left, 0);
 		print(v->right, 0);
-
-		PRTN(v->LHS);
-		PRTS(symbol(v->type));
-		PRTN(v->RHS);
+		PUTN(v->LHS);
+		PUTS(symbol(v->type));
+		PUTN(v->RHS);
+	}
+	else if (root) {
+		PUTN(v->value);
+	}
+	else {
+		return;
 	}
 
-	PRTS(" = ");
-	PRTN(v->value);
-	PRTS("\n");
+	PUTS(" = ");
+	PUTN(v->value);
+	PUTS("\n");
 }
