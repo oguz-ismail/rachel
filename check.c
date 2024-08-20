@@ -29,23 +29,17 @@ typedef const struct node *NODE;
 
 static int
 overflow(NODE v) {
-	long x, y;
-
 	if (v->type == LEAF)
 		return 0;
 
 	if (overflow(v->left) || overflow(v->right))
 		return 1;
 
-	x = v->LHS;
-	y = v->RHS;
-	assert(x > 0 && y > 0);
-
 	switch (v->type) {
 	case ADD:
-		return x > LONG_MAX-y;
+		return v->LHS > LONG_MAX - v->RHS;
 	case MUL:
-		return x > LONG_MAX/y;
+		return v->LHS > LONG_MAX / v->RHS;
 	}
 
 	return 0;
@@ -54,7 +48,7 @@ overflow(NODE v) {
 static int
 find(long x, NODE v, NODE *p) {
 	if (v->value == x) {
-		if (p != NULL)
+		if (p)
 			*p = v;
 
 		return 1;
@@ -67,7 +61,7 @@ find(long x, NODE v, NODE *p) {
 }
 
 static int
-sift(NODE v, NODE u) {
+filter(NODE v, NODE u) {
 	NODE w;
 
 	if (find(v->value, u, &w) && v->type > w->type)
@@ -76,46 +70,53 @@ sift(NODE v, NODE u) {
 	if (v->type == LEAF)
 		return 0;
 
-	return sift(v->right, u) || sift(v->left, u);
+	return filter(v->right, u) || filter(v->left, u);
 }
 
 static int
-duplication(NODE v) {
+duplicate(NODE v) {
 	if (v->type == LEAF)
 		return 0;
 
-	return sift(v->left, v->right)
-		|| duplication(v->left)
-		|| duplication(v->right);
+	return filter(v->left, v->right)
+		|| duplicate(v->left)
+		|| duplicate(v->right);
 }
 
 static int
-shortsight(void) {
+verbose(void) {
 	NODE v, u;
 	size_t i;
 
 	v = peek();
-	for (i = -1; (i = next(i)) != -1; ) {
+	for (i = -1; (i = next(i)) != -1; )
 		if (find(get(i), v, &u) && u->type != LEAF)
 			return 1;
-	}
 
 	return 0;
 }
 
 static int
-regression(NODE v) {
+circular(NODE v) {
 	if (v->type == LEAF)
 		return 0;
 
 	return find(v->value, v->left, NULL)
 		|| find(v->value, v->right, NULL)
-		|| regression(v->left)
-		|| regression(v->right);
+		|| circular(v->left)
+		|| circular(v->right);
 }
 
 static int
-branch(long x, int match, int follow, NODE v) {
+branch(long x, int half, int match, int follow, NODE v) {
+	if (half) {
+		if (branch(x*2, 0, match, follow, v))
+			return 1;
+
+		if (DIVIS(x, 2) && branch(x/2, 0, match, follow, v))
+			return 1;
+	}
+
 	if (v->type & match)
 		if (v->RHS == x || (COMMUT(v->type) && v->LHS == x))
 			return 1;
@@ -123,40 +124,30 @@ branch(long x, int match, int follow, NODE v) {
 	if (v->type == LEAF || !(v->type & follow))
 		return 0;
 
-	if (branch(x, match, follow, v->left))
+	if (branch(x, 0, match, follow, v->left))
 		return 1;
 
 	if (!COMMUT(v->type))
 		match ^= follow;
 
-	return branch(x, match, follow, v->right);
+	return branch(x, 0, match, follow, v->right);
 }
 
 static int
-half(long x, int match, int follow, NODE v) {
-	if (x%2 == 0 && branch(x/2, match, follow, v))
-		return 1;
-
-	return branch(x, match, follow, v)
-		|| branch(2*x, match, follow, v);
-}
-
-static int
-detour(NODE v) {
-	int (*fn)(long, int, int, NODE);
-	int pair, t[2];
+indirect(NODE v) {
+	int add, pair, t;
 
 	if (v->type == LEAF)
 		return 0;
 
-	if (detour(v->left) || detour(v->right))
+	if (indirect(v->left) || indirect(v->right))
 		return 1;
 
-	fn = branch;
+	add = 0;
 	switch (v->type) {
 	case ADD:
 	case SUB:
-		fn = half;
+		add = 1;
 		pair = ADD|SUB;
 		break;
 	case MUL:
@@ -167,12 +158,14 @@ detour(NODE v) {
 		return 0;
 	}
 
-	t[0] = t[1] = pair^v->type;
-	if (!COMMUT(v->type))
-		t[1] = v->type;
+	t = pair^v->type;
+	if (branch(v->RHS, add, t, pair, v->left))
+		return 1;
 
-	return fn(v->RHS, t[0], pair, v->left)
-		|| fn(v->LHS, t[1], pair, v->right);
+	if (!COMMUT(v->type))
+		t = v->type;
+
+	return branch(v->LHS, add, t, pair, v->right);
 }
 
 int
@@ -180,11 +173,11 @@ check(int aux) {
 	NODE v;
 
 	v = peek();
-	if (overflow(v) || duplication(v))
+	if (overflow(v) || duplicate(v))
 		return 1;
 
 	if (aux)
-		return shortsight() || regression(v) || detour(v);
+		return verbose() || circular(v) || indirect(v);
 
 	return 0;
 }

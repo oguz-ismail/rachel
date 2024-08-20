@@ -18,9 +18,7 @@
 
 #ifndef GENERIC
 #include <stddef.h>
-#ifdef STATIC
-#include "libc.h"
-#else
+#ifndef STATIC
 #include <errno.h>
 #include <stdlib.h>
 #if _WIN32
@@ -28,17 +26,46 @@
 #else
 #include <unistd.h>
 #endif
+#else
+#include "crt.h"
 #endif
 
-static char a[80];
+static char a[128];
 static size_t n;
 
 void print_string(int, const char *);
-void flush(void);
+
+static void
+full_write(int fd, const char *buf, size_t len, int retry) {
+	size_t i, ret;
+
+	for (i = 0; i < len; ) {
+		ret = write(fd, &buf[i], len-i);
+		if (ret != -1) {
+			i += ret;
+			continue;
+		}
+
+		if (retry && (errno == EINTR || errno == EAGAIN))
+			continue;
+
+		if (fd == 2)
+			break;
+
+		print_string(2, "write error\n");
+		_exit(2);
+	}
+}
+
+void
+flush(void) {
+	full_write(1, a, n, 1);
+	n = 0;
+}
 
 static void
 buffer(const char *p) {
-	for (; *p != '\0'; p++) {
+	for (; *p; p++) {
 		if (n >= sizeof a)
 			flush();
 
@@ -46,28 +73,6 @@ buffer(const char *p) {
 
 		if (*p == '\n')
 			flush();
-	}
-}
-
-static void
-write_all(int fd, const char *buf, size_t len, int retry) {
-	size_t i, ret;
-
-	for (i = 0; i < len; i += ret) {
-		ret = write(fd, &buf[i], len-i);
-		if (ret != -1)
-			continue;
-
-		if (retry && errno == EINTR) {
-			ret = 0;
-			continue;
-		}
-
-		if (fd != 1)
-			break;
-
-		print_string(2, "write error\n");
-		_exit(2);
 	}
 }
 
@@ -79,8 +84,8 @@ print_string(int fd, const char *s) {
 		buffer(s);
 	}
 	else {
-		for (len = 0; s[len] != '\0'; len++);
-		write_all(fd, s, len, 0);
+		for (len = 0; s[len]; len++);
+		full_write(fd, s, len, 0);
 	}
 }
 
@@ -97,11 +102,5 @@ print_number(int fd, long x) {
 	while (x > 0);
 
 	print_string(fd, p);
-}
-
-void
-flush(void) {
-	write_all(1, a, n, 1);
-	n = 0;
 }
 #endif

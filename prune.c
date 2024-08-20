@@ -19,7 +19,6 @@
 #include <assert.h>
 #include "stack.h"
 #include "node.h"
-#include "prune.h"
 
 int
 prune(int ops) {
@@ -28,10 +27,10 @@ prune(int ops) {
 
 	l = lift();
 	r = peek();
+
 	x = l->value;
 	y = r->value;
 	assert(x > 0 && y > 0);
-
 	if (x < y) {
 		ops &= ~(ADD|SUB|MUL|DIV);
 		assert(!ops);

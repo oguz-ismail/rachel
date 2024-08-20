@@ -1,8 +1,8 @@
 od -A n -t u1 -v </dev/urandom | awk '{
  for (i = 1; i <= NF; i++) {
-	if (picked == 0) {
-		big = $i%5
-		small = 6-big
+	if (picked != 1) {
+		large = $i%5
+		small = 6-large
 		picked = 1
 	}
 	else if (small > 0) {
@@ -12,15 +12,15 @@ od -A n -t u1 -v </dev/urandom | awk '{
 			small--
 		}
 	}
-	else if (big == 4) {
+	else if (large == 4) {
 		numbers = numbers "25 50 75 100 "
-		big = 0
+		large = 0
 	}
-	else if (big > 0) {
+	else if (large > 0) {
 		x = (1 + $i%4)*25
 		if (seen[x]++ < 1) {
 			numbers = numbers x " "
-			big--
+			large--
 		}
 	}
 	else if (n < 2) {
@@ -36,3 +36,4 @@ od -A n -t u1 -v </dev/urandom | awk '{
 END {
 	print numbers target
 }'
+# vim: ft=awk

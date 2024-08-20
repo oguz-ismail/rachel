@@ -21,7 +21,7 @@
 
 static int a[8];
 static size_t n;
-static size_t avail[8], total;
+static size_t total, avail[8];
 #ifndef NDEBUG
 static size_t used[8];
 #endif
