@@ -22,7 +22,6 @@
 static void
 flip(struct node *v) {
 	struct node *u;
-
 	assert(v->type != LEAF);
 	u = v->left;
 	v->left = v->right;
@@ -31,31 +30,27 @@ flip(struct node *v) {
 
 static struct node *
 rotate(struct node *v, struct node **e) {
-	struct node *l;
-
+	struct node *u;
 	assert(v->type != LEAF);
-	l = v->left;
-	assert(e == &l->left || e == &l->right);
-	l->value = v->value;
+	u = v->left;
+	assert(e == &u->left || e == &u->right);
+	u->value = v->value;
 	v->left = *e;
 	*e = v;
-
-	return l;
+	return u;
 }
 
 static struct node *
 invert(struct node *v, struct node **e, int t) {
 	struct node *u;
-
 	u = rotate(v, e);
 	u->type = t;
 	flip(v);
-
 	return u;
 }
 
 struct node *
-reunite(struct node *v) {
+pair(struct node *v) {
 	struct node *l, *u;
 
 	switch (v->type) {
@@ -81,13 +76,12 @@ reunite(struct node *v) {
 
 struct node *
 order(struct node *v) {
-	struct node *l, *u;
 	long x, y;
+	struct node *l, *u;
 
-	l = v->left;
 	x = v->LHS;
 	y = v->RHS;
-
+	l = v->left;
 	switch (v->type) {
 	case ADD:
 		if (x < y)
@@ -108,7 +102,7 @@ order(struct node *v) {
 		update(v);
 		return u;
 	case MUL:
-		if (x > y && (y%5 != 0 || x%5 == 0))
+		if (x > y && (!DIVIS(y, 5) || DIVIS(x, 5)))
 			flip(v);
 
 		break;
@@ -116,13 +110,13 @@ order(struct node *v) {
 		if (l->type != MUL)
 			break;
 
-		if (l->LHS % y == 0)
+		if (DIVIS(l->LHS, y))
 			u = rotate(v, &l->left);
-		else if (y % l->LHS == 0)
+		else if (DIVIS(y, l->LHS))
 			flip(u = invert(v, &l->left, DIV));
-		else if (l->RHS % y == 0)
+		else if (DIVIS(l->RHS, y))
 			u = rotate(v, &l->right);
-		else if (y % l->RHS == 0)
+		else if (DIVIS(y, l->RHS))
 			u = invert(v, &l->right, DIV);
 		else
 			break;
@@ -141,6 +135,5 @@ refine(struct node *v) {
 
 	v->left = refine(v->left);
 	v->right = refine(v->right);
-
-	return order(reunite(v));
+	return order(pair(v));
 }

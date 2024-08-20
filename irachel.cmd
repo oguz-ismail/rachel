@@ -17,21 +17,22 @@ rem along with this program. If not, see <https://www.gnu.org/licenses/>.
 setlocal
 set skip=0
 set args=%*
-set ok=0
-set dst=new_target
+set found=0
+set next=new_target
 
 :retry
 rachel -s %skip% -- %args%
 if errorlevel 2 (
 	exit /b
 ) else if errorlevel 1 (
-	if %ok% == 1 (
+	if %found% == 1 (
 		exit /b 0
 	) else (
-		goto %dst%
+		goto %next%
 	)
 )
-set ok=1
+
+set found=1
 echo more? [y]es, [n]o (default: no^) 1>&2
 set reply=n
 set /p reply=
@@ -45,13 +46,13 @@ exit /b 0
 set numbers=
 set target=
 for %%a in (%args%) do (
-	call :body %%a
+	call :arg %%a
 )
-set /a high=target+1
 set /a low=target-1
+set /a high=target+1
 
 :no_answer
-set dst=no_answer
+set next=no_answer
 echo try again? [+] %high%, [-] %low%, [new target], [n]o 1>&2
 set reply=n
 set /p reply=
@@ -65,11 +66,11 @@ if %reply% == + (
 	exit /b 1
 ) else (
 	set target=%reply%
-	set dst=new_target
+	set next=new_target
 )
 set "args=%numbers% %target%"
 goto retry
 
-:body
+:arg
 set "numbers=%numbers%%target% "
 set target=%*

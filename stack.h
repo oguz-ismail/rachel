@@ -1,7 +1,5 @@
 #include <stddef.h>
 
-struct node;
-
 void push(void *);
 struct node *pop(void);
 const struct node *peek(void);

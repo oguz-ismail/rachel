@@ -17,12 +17,13 @@
  */
 
 #include <assert.h>
-#include "check.h"
 #include "leaf.h"
-#include "refine.h"
 #include "stack.h"
 #include "node.h"
-#include "prune.h"
+
+int check(int);
+int prune(int);
+struct node *refine(struct node *);
 
 int target;
 static int oneoff;

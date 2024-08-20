@@ -6,7 +6,11 @@
 .bss
 
 errno:
+#if __SUNPRO_C
+.size errno, 4
+#else
 	.word
+#endif
 
 .text
 
@@ -248,7 +252,7 @@ write:
 #endif
 
 #if __arm__
-#include "div.s"
+#include "div.asm"
 #endif
 
 #if __FreeBSD__

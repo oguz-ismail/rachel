@@ -1,4 +1,5 @@
 rachel
+rachel.exe
 *.o
 *.obj
 merged.c

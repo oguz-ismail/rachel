@@ -1,28 +1,15 @@
-BEGIN {
-	pfx["leaf.c"] = "a"
-	pfx["out.c"] = "b"
-	pfx["stack.c"] = "c"
-}
-
-seen[FILENAME] == 0 {
-	if (pfx[FILENAME] != "") {
-		print "#undef a"
-		print "#undef n"
-		print "#define a " pfx[FILENAME] "a"
-		print "#define n " pfx[FILENAME] "n"
-	}
-
-	seen[FILENAME] = 1
+FILENAME != f {
+	f = FILENAME
+	c++
+	print "#undef a"
+	print "#undef n"
+	print "#define a a" c
+	print "#define n n" c
 }
 
 /^extern / {
 	print "static" substr($0, 7)
 	next
-}
-
-/^struct node;/ {
-	if (seen["node.h"] == 1)
-		next
 }
 
 /^[a-z]/ && (\
@@ -34,7 +21,7 @@ seen[FILENAME] == 0 {
 	next
 }
 
-(/^#include "/ && !/libc\.h/) ||\
+(/^#include "/ && !/crt\.h/) ||\
 (/^[a-z]/ && /[^)];/ && !/^(static|typedef) /) {
 	next
 }

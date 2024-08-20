@@ -5,16 +5,16 @@ CFLAGS += -O3 -fno-tree-vectorize -flto -nostdlib -fno-builtin \
 	-fno-stack-protector -fno-pie -fno-unwind-tables \
 	-fno-asynchronous-unwind-tables
 LDFLAGS += -static -no-pie -Wl,-z,norelro -Wl,-z,noexecstack
-objs += libc.o
+objs += crt.o
 
 .SUFFIXES: .S
 
 .S.o:
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
-libc.o: libc.S
+crt.o: crt.S
 
-$(bin): libc.o
+$(bin): crt.o
 
 strip: $(bin)
 	objcopy -S -j .rodata -j .bss -j .data.rel.ro -j .text \

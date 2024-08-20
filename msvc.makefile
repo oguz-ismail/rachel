@@ -1,4 +1,4 @@
-CFLAGS = /O2 /GL /DNDEBUG $(xflags)
+CFLAGS = /O2 /GL /DNDEBUG $(cflags)
 LDFLAGS = /LTCG
 
 bin = rachel.exe
