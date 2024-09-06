@@ -45,6 +45,9 @@ _exit:
 #elif __powerpc64__ && __linux__
 	li %r0, 1
 	sc
+#elif __riscv && __linux__
+	li a7, 93
+	scall
 #elif __s390x__ && __linux__
 	lghi %r1, 1
 	svc 0
@@ -109,6 +112,15 @@ _start:
 	stdu %r1, -128(%r1)
 	bl main
 	b _exit
+#elif __riscv && __riscv_xlen == 64 && __linux__
+.option push
+.option norelax
+	la gp, __global_pointer$
+.option pop
+	ld a0, 0(sp)
+	addi a1, sp, 8
+	call main
+	tail _exit
 #elif __s390x__ && __linux__
 	lg %r2, 0(%r15)
 	la %r3, 8(%r15)
@@ -164,7 +176,7 @@ write:
 	mov r7, #4
 	swi #0
 	pop {r7}
-	cmn r0, #4096
+	cmp r0, #0
 	bxcc lr
 #elif __arm__ && __NetBSD__
 	svc #0xa00004
@@ -194,12 +206,15 @@ write:
 	sc
 	bso- .Lerr
 	blr
+#elif __riscv && __linux__
+	li a7, 64
+	scall
+	bltz a0, .Lerr
+	ret
 #elif __s390x__ && __linux__
 	lghi %r1, 4
 	svc 0
-	lghi %r0, -4095
-	clgr %r2, %r0
-	jgnl .Lerr
+	cgijl %r2, 0, .Lerr
 	br %r14
 #endif
 .Lerr:
@@ -244,6 +259,11 @@ write:
 	stw %r3, 0(%r4)
 	li %r3, -1
 	blr
+#elif __riscv && __linux__
+	neg a0, a0
+	sw a0, errno, t1
+	li a0, -1
+	ret
 #elif __s390x__ && __linux__
 	lcr %r2, %r2
 	strl %r2, errno
