@@ -28,3 +28,9 @@ void flush(void);
 #define EPUTN(x) fprintf(stderr, "%ld", (long)(x))
 #define EXIT(x)  exit(x)
 #endif
+
+#if _WIN32 && defined(STATIC)
+#define EOL "\r\n"
+#else
+#define EOL "\n"
+#endif
