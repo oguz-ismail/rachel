@@ -3,5 +3,8 @@
 #undef errno
 extern int errno;
 
-_Noreturn void _exit(int);
+#ifndef _MSC_VER
+_Noreturn
+#endif
+void _exit(int);
 int write(int, const void *, unsigned);
