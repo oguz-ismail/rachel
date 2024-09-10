@@ -118,5 +118,5 @@ print(const struct node *v, int root) {
 
 	PUTS(" = ");
 	PUTN(v->value);
-	PUTS("\n");
+	PUTS(EOL);
 }
