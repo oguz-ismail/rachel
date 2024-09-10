@@ -29,31 +29,30 @@
 #else
 #include "crt.h"
 #endif
+#include "os.h"
 
 static char a[128];
 static size_t n;
 
-void print_string(int, const char *);
-
 static void
-full_write(int fd, const char *buf, size_t len, int retry) {
+full_write(int fd, const char *buf, size_t count, int retry) {
 	size_t i, ret;
 
-	for (i = 0; i < len; ) {
-		ret = write(fd, &buf[i], len-i);
+	for (i = 0; i < count; ) {
+		ret = write(fd, &buf[i], count-i);
 		if (ret != -1) {
 			i += ret;
 			continue;
 		}
 
-		if (retry && (errno == EINTR || errno == EAGAIN))
+		if (retry && errno == EINTR)
 			continue;
 
 		if (fd == 2)
 			break;
 
-		print_string(2, "write error\n");
-		_exit(2);
+		EPUTS("write error" EOL);
+		EXIT(2);
 	}
 }
 
@@ -91,7 +90,7 @@ print_string(int fd, const char *s) {
 
 void
 print_number(int fd, long x) {
-	static char buf[48];
+	static char buf[32];
 	char *p;
 
 	p = &buf[sizeof(buf)-1];

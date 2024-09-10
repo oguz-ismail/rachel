@@ -51,14 +51,14 @@ number(const char *s, int min) {
 		goto err;
 
 	for (; SPACE(*p); p++);
-	if (*p != '\0' && *p != '\n')
+	if (*p != '\0')
 		goto err;
 
 	return sum;
 err:
 	EPUTS("bad number: ");
 	EPUTS(s);
-	EPUTS("\n");
+	EPUTS(EOL);
 	EXIT(2);
 }
 
@@ -82,7 +82,7 @@ main(int argc, char *argv[]) {
 		if (*p != 's' || (*++p == '\0' && i >= argc-1)) {
 			EPUTS("Usage: ");
 			EPUTS(argv[0]);
-			EPUTS(" [-s skip_count] numbers target\n");
+			EPUTS(" [-s skip_count] numbers target" EOL);
 			EXIT(2);
 		}
 
@@ -96,7 +96,7 @@ main(int argc, char *argv[]) {
 	argv += i;
 
 	if (argc < 2 || argc > 7) {
-		EPUTS("fewer/more operands than expected\n");
+		EPUTS("fewer/more operands than expected" EOL);
 		return 2;
 	}
 
@@ -105,14 +105,14 @@ main(int argc, char *argv[]) {
 
 	target = number(argv[i], 1);
 	if (!search(skip)) {
-		EPUTS("no answer\n");
+		EPUTS("no answer" EOL);
 		return 1;
 	}
 
 #ifdef GENERIC
 	fflush(NULL);
 	if (ferror(stdout)) {
-		EPUTS("write error\n");
+		EPUTS("write error" EOL);
 		return 2;
 	}
 #endif
