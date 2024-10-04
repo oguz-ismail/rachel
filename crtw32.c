@@ -32,12 +32,12 @@ _exit(int status) {
 }
 
 static int
-unescape(const char **src, char **dst, int quot) {
+unescape(const char **src, char *volatile *dst, int quot) {
 	const char *p;
 	int i, n;
 
-	switch (*(p = *src)) {
-	case '\\':
+	p = *src;
+	if (*p == '\\') {
 		while (*++p == '\\');
 		if (*p != '"')
 			return 0;
@@ -50,13 +50,9 @@ unescape(const char **src, char **dst, int quot) {
 			*(*dst)++ = '"';
 		else
 			p--;
-
-		break;
-	case '"':
-		if (!quot)
-			return 0;
-
-		for (; p[1] == '"'; p++);
+	}
+	else if (quot && *p == '"') {
+		for (; *(p+1) == '"'; p++);
 		if (p == *src)
 			return 0;
 
@@ -66,9 +62,8 @@ unescape(const char **src, char **dst, int quot) {
 
 		if (n%3 != 1)
 			p--;
-
-		break;
-	default:
+	}
+	else {
 		return 0;
 	}
 
@@ -86,7 +81,7 @@ mainCRTStartup(void) {
 	int quot;
 
 	p = GetCommandLineA();
-	q = argv[0] = buf;
+	argv[0] = q = buf;
 	quot = 0;
 	for (; DELIM(*p); p++);
 	for (; *p; p++)
