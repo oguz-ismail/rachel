@@ -20,11 +20,8 @@
 #include <stddef.h>
 
 static int a[8];
-static size_t n;
-static size_t total, avail[8];
-#ifndef NDEBUG
-static size_t used[8];
-#endif
+static size_t n, total;
+static size_t avail[8], used[8];
 
 void
 save(int x) {
@@ -67,7 +64,7 @@ use(size_t i) {
 	assert(i < n);
 	assert(avail[i] > 0);
 	avail[i]--;
-#ifndef NDEBUG
+#ifdef REUSE
 	used[i]++;
 #endif
 	return a[i];
@@ -77,10 +74,19 @@ void
 unuse(size_t i) {
 	assert(i < n);
 	avail[i]++;
-#ifndef NDEBUG
 	assert(used[i] > 0);
+#ifdef REUSE
 	used[i]--;
 #endif
+}
+
+void
+restore(void) {
+	size_t i;
+	for (i = 0; i < n; i++) {
+		avail[i] += used[i];
+		used[i] = 0;
+	}
 }
 
 int
@@ -92,4 +98,9 @@ load(size_t i) {
 size_t
 leaf_count(void) {
 	return total;
+}
+
+void
+reset(void) {
+	n = total = 0;
 }
