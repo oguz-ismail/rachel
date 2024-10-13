@@ -1,5 +1,7 @@
 rachel
 rachel.exe
+rachel.wasm
+rachel.js
 *.o
 *.obj
 merged.c
