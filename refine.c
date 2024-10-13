@@ -102,7 +102,7 @@ order(struct node *v) {
 		update(v);
 		return u;
 	case MUL:
-		if (x > y && (!DIVIS(y, 5) || DIVIS(x, 5)))
+		if (!DIVS(y, 5) && (x > y || DIVS(x, 5)))
 			flip(v);
 
 		break;
@@ -110,13 +110,13 @@ order(struct node *v) {
 		if (l->type != MUL)
 			break;
 
-		if (DIVIS(l->LHS, y))
+		if (DIVS(l->LHS, y))
 			u = rotate(v, &l->left);
-		else if (DIVIS(y, l->LHS))
+		else if (DIVS(y, l->LHS))
 			flip(u = invert(v, &l->left, DIV));
-		else if (DIVIS(l->RHS, y))
+		else if (DIVS(l->RHS, y))
 			u = rotate(v, &l->right);
-		else if (DIVIS(y, l->RHS))
+		else if (DIVS(y, l->RHS))
 			u = invert(v, &l->right, DIV);
 		else
 			break;

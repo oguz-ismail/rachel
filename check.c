@@ -111,10 +111,10 @@ circular(NODE v) {
 static int
 branch(long x, int half, int match, int follow, NODE v) {
 	if (half) {
-		if (branch(x*2, 0, match, follow, v))
+		if (branch(2*x, 0, match, follow, v))
 			return 1;
 
-		if (DIVIS(x, 2) && branch(x/2, 0, match, follow, v))
+		if (DIVS(x, 2) && branch(x/2, 0, match, follow, v))
 			return 1;
 	}
 

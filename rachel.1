@@ -15,7 +15,7 @@
 .\" You should have received a copy of the GNU General Public License
 .\" along with this program. If not, see <https://www.gnu.org/licenses/>.
 .
-.TH RACHEL 1 "26 Jun 2024"
+.TH RACHEL 1 "18 Oct 2024"
 .SH NAME
 rachel \- Countdown solver
 .SH SYNOPSIS
@@ -52,11 +52,13 @@ in fewer key presses.
 .SH EXAMPLES
 .nf
 .ft CW
-$ rachel  5 5 10  15
-10 + 5 = 15
-$ rachel  -s 1  5 5 10  15
-5 * 5 = 25
-25 - 10 = 15
+$ rachel  25 75 7 1 10 9  765
+75 + 10 = 85
+9 * 85 = 765
+$ rachel  -s 1  25 75 7 1 10 9  765
+75 - 1 = 74
+74 * 10 = 740
+740 + 25 = 765
 .ft
 .fi
 .SH "EXIT STATUS"

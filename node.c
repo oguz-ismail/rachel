@@ -42,7 +42,7 @@ make(struct node *v, int t) {
 		v->value = x*y;
 		break;
 	case DIV:
-		if (x < y || !DIVIS(x, y))
+		if (x < y || !DIVS(x, y))
 			return 0;
 
 		v->value = x/y;
@@ -78,7 +78,7 @@ update(struct node *v) {
 		v->value = x*y;
 		break;
 	case DIV:
-		assert(x >= y && DIVIS(x, y));
+		assert(x >= y && DIVS(x, y));
 		v->value = x/y;
 		break;
 	}
