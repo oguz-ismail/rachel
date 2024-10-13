@@ -101,6 +101,9 @@ search(int mode) {
 	else
 		oneoff = 1;
 
+#ifdef __EMSCRIPTEN__
+	clear();
+#endif
 	n = leaf_count();
 	for (i = 1; i <= n; i++) {
 		if (search_depth(i))

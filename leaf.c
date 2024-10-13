@@ -93,3 +93,9 @@ size_t
 leaf_count(void) {
 	return total;
 }
+
+void
+reset(void) {
+	n = 0;
+	total = 0;
+}
