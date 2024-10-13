@@ -6,3 +6,4 @@ int use(size_t);
 void unuse(size_t);
 int load(size_t);
 size_t leaf_count(void);
+void reset(void);

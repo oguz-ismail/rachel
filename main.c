@@ -63,12 +63,18 @@ err:
 }
 
 int
-main(int argc, char *argv[]) {
+#ifndef __EMSCRIPTEN__
+main(int argc, char *argv[])
+#else
+run(int n1, int n2, int n3, int n4, int n5, int n6, int t)
+#endif
+{
 	int skip;
 	int i;
 	const char *p;
 
 	skip = -1;
+#ifndef __EMSCRIPTEN__
 	for (i = 1; i < argc; i++) {
 		p = argv[i];
 		if (*p != '-')
@@ -104,6 +110,37 @@ main(int argc, char *argv[]) {
 		save(number(argv[i], 1));
 
 	target = number(argv[i], 1);
+#else
+#define REJECT(x) { \
+	EPUTS("bad number: "); \
+	EPUTN(x); \
+	EPUTS(EOL); \
+	return 2; \
+}
+#define SAVE(x) \
+	if (x > 0) \
+		save(x); \
+	else if (x < 0) \
+		REJECT(x);
+
+	reset();
+	SAVE(n1);
+	SAVE(n2);
+	SAVE(n3);
+	SAVE(n4);
+	SAVE(n5);
+	SAVE(n6);
+
+	if (leaf_count() < 1) {
+		EPUTS("fewer operands than expected" EOL);
+		return 2;
+	}
+
+	if (t > 0)
+		target = t;
+	else
+		REJECT(t);
+#endif
 	if (!search(skip)) {
 		EPUTS("no answer" EOL);
 		return 1;
