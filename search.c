@@ -101,6 +101,10 @@ search(int mode) {
 	else
 		oneoff = 1;
 
+#ifdef REUSE
+	leapt = found = 0;
+	clear();
+#endif
 	n = leaf_count();
 	for (i = 1; i <= n; i++) {
 		if (search_depth(i))
