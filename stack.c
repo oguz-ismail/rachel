@@ -50,3 +50,8 @@ size_t
 stack_size(void) {
 	return n;
 }
+
+void
+empty(void) {
+	n = 0;
+}
