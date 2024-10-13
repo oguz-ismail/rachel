@@ -7,7 +7,7 @@
 #define LHS left->value
 #define RHS right->value
 
-#define DIVIS(x, y) ((x)%(y) == 0)
+#define DIVS(x, y) ((x)%(y) == 0)
 
 struct node {
 	long value;
