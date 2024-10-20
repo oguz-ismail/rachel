@@ -1,9 +1,8 @@
-include common.mk
+include makefile
 
 CPPFLAGS += -DSTATIC
-CFLAGS += -O3 -fno-tree-vectorize -flto -nostdlib -fno-builtin \
-	-fno-stack-protector -fno-pie -fno-unwind-tables \
-	-fno-asynchronous-unwind-tables
+CFLAGS += -nostdlib -fno-builtin -fno-stack-protector -fno-pie \
+	-fno-unwind-tables -fno-asynchronous-unwind-tables
 LDFLAGS += -static $(ldflags) -Wl,-z,norelro -Wl,-z,noexecstack
 ldflags = -no-pie
 objs += crt.o
