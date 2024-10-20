@@ -10,7 +10,7 @@ objs = check.o leaf.o main.o node.o out.o prune.o refine.o search.o stack.o
 all: $(bin)
 
 $(bin): $(objs)
-	$(CC) $(LDFLAGS) -o $@ $(objs)
+	$(CC) $(LDFLAGS) -o $@ $(objs) $(LDLIBS)
 
 check.o node.o prune.o refine.o search.o: node.h
 
