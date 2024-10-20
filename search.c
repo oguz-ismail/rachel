@@ -69,8 +69,10 @@ search_depth(size_t d) {
 		}
 
 		answer = pop();
+#ifndef RPN
 		if (oneoff)
 			answer = refine(answer);
+#endif
 
 		print(answer, 1);
 		return 1;
