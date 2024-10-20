@@ -1,6 +1,6 @@
 suffix = .js
 
-include common.mk
+include makefile
 
 CC = emcc
 CPPFLAGS += -DGENERIC -DREUSE
