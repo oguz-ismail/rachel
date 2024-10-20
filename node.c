@@ -21,6 +21,12 @@
 #include "stack.h"
 #include "node.h"
 
+#ifdef RPN
+#define PAD(s) s
+#else
+#define PAD(s) " " s " "
+#endif
+
 int
 make(struct node *v, int t) {
 	long x, y;
@@ -88,13 +94,13 @@ static const char *
 symbol(int t) {
 	switch (t) {
 	case ADD:
-		return " + ";
+		return PAD("+");
 	case SUB:
-		return " - ";
+		return PAD("-");
 	case MUL:
-		return " * ";
+		return PAD("*");
 	case DIV:
-		return " / ";
+		return PAD("/");
 	}
 
 	return "";
@@ -102,6 +108,21 @@ symbol(int t) {
 
 void
 print(const struct node *v, int root) {
+#ifdef RPN
+	if (v->type != LEAF) {
+		print(v->left, 0);
+		print(v->right, 0);
+		PUTS(symbol(v->type));
+	}
+	else {
+		PUTN(v->value);
+	}
+
+	if (root)
+		PUTS(EOL);
+	else
+		PUTS(" ");
+#else
 	if (v->type != LEAF) {
 		print(v->left, 0);
 		print(v->right, 0);
@@ -116,7 +137,8 @@ print(const struct node *v, int root) {
 		return;
 	}
 
-	PUTS(" = ");
+	PUTS(PAD("="));
 	PUTN(v->value);
 	PUTS(EOL);
+#endif
 }
