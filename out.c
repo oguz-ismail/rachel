@@ -18,7 +18,9 @@
 
 #ifndef GENERIC
 #include <stddef.h>
-#ifndef STATIC
+#ifdef STATIC
+#include "crt.h"
+#else
 #include <errno.h>
 #include <stdlib.h>
 #if _WIN32
@@ -26,8 +28,6 @@
 #else
 #include <unistd.h>
 #endif
-#else
-#include "crt.h"
 #endif
 #include "os.h"
 
@@ -45,7 +45,7 @@ full_write(int fd, const char *buf, size_t count, int retry) {
 			continue;
 		}
 
-		if (retry && errno == EINTR)
+		if (errno == EINTR && retry)
 			continue;
 
 		if (fd == 2)
@@ -93,7 +93,7 @@ print_number(int fd, long x) {
 	static char buf[32];
 	char *p;
 
-	p = &buf[sizeof(buf)-1];
+	p = &buf[(sizeof buf)-1];
 	do {
 		*--p = '0' + x%10;
 		x /= 10;
