@@ -18,7 +18,9 @@
 
 #ifndef GENERIC
 #include <stddef.h>
-#ifndef STATIC
+#ifdef STATIC
+#include "crt.h"
+#else
 #include <errno.h>
 #include <stdlib.h>
 #if _WIN32
@@ -26,8 +28,6 @@
 #else
 #include <unistd.h>
 #endif
-#else
-#include "crt.h"
 #endif
 #include "os.h"
 
