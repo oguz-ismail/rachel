@@ -17,7 +17,7 @@ errno:
 _exit:
 #if __aarch64__ && (__FreeBSD__ || __OpenBSD__)
 	mov w8, 1
-	svc 0
+99:	svc 0
 #elif __aarch64__ && __linux__
 	mov w8, 93
 	svc 0
@@ -26,7 +26,7 @@ _exit:
 	svc 0
 #elif __amd64__ && (__FreeBSD__ || __NetBSD__ || __OpenBSD__ || __sun__)
 	mov $1, %eax
-	syscall
+99:	syscall
 #elif __amd64__ && __linux__
 	mov $60, %eax
 	syscall
@@ -149,14 +149,14 @@ write:
 	ret
 #elif __aarch64__ && __OpenBSD__
 	mov w8, 4
-	svc 0
+98:	svc 0
 	dsb nsh
 	isb
 	bcs .Lerr
 	ret
 #elif __amd64__ && (__FreeBSD__ || __NetBSD__ || __OpenBSD__ || __sun__)
 	mov $4, %eax
-	syscall
+98:	syscall
 	jc .Lerr
 	ret
 #elif __amd64__ && __linux__
@@ -290,6 +290,10 @@ write:
 .long 8, 4, 1
 .string "OpenBSD"
 .long 0
+
+.section .openbsd.syscalls, ""
+.long 99b, 1
+.long 98b, 4
 #endif
 
 #if __arm__ && __linux__

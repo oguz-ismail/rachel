@@ -2,7 +2,8 @@ include makefile
 
 CPPFLAGS += -DSTATIC
 CFLAGS += -nostdlib -fno-builtin -fno-stack-protector -fno-pie \
-	-fno-unwind-tables -fno-asynchronous-unwind-tables
+	-fno-unwind-tables -fno-asynchronous-unwind-tables \
+	-fomit-frame-pointer
 LDFLAGS += -static $(ldflags) -Wl,-z,norelro -Wl,-z,noexecstack
 ldflags = -no-pie
 objs += crt.o
@@ -19,6 +20,6 @@ $(bin): crt.o
 strip: $(bin)
 	$gobjcopy -S -j .rodata -j .bss -j .data.rel.ro -j .text \
 		-j .note.ABI-tag -j .note.netbsd.ident -j .note.openbsd.ident \
-		$(bin) $(bin)
+		-j .openbsd.syscalls $(bin) $(bin)
 	ls -l $(bin)
 	$gsize $(bin)
