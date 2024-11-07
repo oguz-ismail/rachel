@@ -1,12 +1,12 @@
 #ifndef GENERIC
-#ifndef STATIC
+#ifdef STATIC
+#include "crt.h"
+#else
 #if _WIN32
 #include <stdlib.h>
 #else
 #include <unistd.h>
 #endif
-#else
-#include "crt.h"
 #endif
 
 #define PUTS(s)  print_string(1, s)
