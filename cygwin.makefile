@@ -5,7 +5,7 @@ include makefile
 static: CPPFLAGS += -DSTATIC
 static: CFLAGS += -nostdlib -fno-builtin -mno-stack-arg-probe \
 	-fno-unwind-tables -fno-asynchronous-unwind-tables
-static: LDFLAGS += -Xlinker --stack=0x200000,0x200000 -Wl,--build-id=none
+static: LDFLAGS += -Xlinker --stack=0x100000,0x100000 -Wl,--build-id=none
 static: LDLIBS += -lkernel32
 static clean: objs += crtw32.o
 
