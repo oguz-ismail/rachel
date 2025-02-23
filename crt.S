@@ -48,6 +48,9 @@ _exit:
 #elif __riscv && __linux__
 	li	a7, 93
 	scall
+#elif __riscv && __OpenBSD__
+	li	t0, 1
+99:	ecall
 #elif __s390x__ && __linux__
 	lghi	%r1, 1
 	svc	0
@@ -69,19 +72,19 @@ _start:
 	mov	(%rdi), %edi
 	call	main
 	mov	%eax, %edi
-	call	_exit
+	jmp	_exit
 #elif __amd64__ && (__linux__ || __OpenBSD__ || __sun__)
 	mov	(%rsp), %edi
 	lea	8(%rsp), %rsi
 	call	main
 	mov	%eax, %edi
-	call	_exit
+	jmp	_exit
 #elif __amd64__ && __NetBSD__
 	mov	(%rbx), %rsi
 	mov	-8(%rsi), %edi
 	call	main
 	mov	%eax, %edi
-	call	_exit
+	jmp	_exit
 #elif __arm__ && __FreeBSD__
 	ldr	r0, [sp]
 	add	r1, sp, #4
@@ -103,7 +106,7 @@ _start:
 	push	%eax
 	call	main
 	push	%eax
-	call	_exit
+	jmp	_exit
 #elif __powerpc64__ && __linux__
 	addis	%r2, %r12, .TOC.-_start@ha
 	addi	%r2, %r2, .TOC.-_start@l
@@ -117,7 +120,12 @@ _start:
 	.option	norelax
 	la	gp, __global_pointer$
 	.option	pop
-	ld	a0, 0(sp)
+	ld	a0, (sp)
+	addi	a1, sp, 8
+	call	main
+	tail	_exit
+#elif __riscv && __riscv_xlen == 64 && __OpenBSD__
+	ld	a0, (sp)
 	addi	a1, sp, 8
 	call	main
 	tail	_exit
@@ -211,6 +219,11 @@ write:
 	scall
 	bltz	a0, .Lerr
 	ret
+#elif __riscv && __OpenBSD__
+	li	t0, 4
+98:	ecall
+	bnez	t0, .Lerr
+	ret
 #elif __s390x__ && __linux__
 	lghi	%r1, 4
 	svc	0
@@ -261,6 +274,10 @@ write:
 	blr
 #elif __riscv && __linux__
 	neg	a0, a0
+	sw	a0, errno, t1
+	li	a0, -1
+	ret
+#elif __riscv && __OpenBSD__
 	sw	a0, errno, t1
 	li	a0, -1
 	ret

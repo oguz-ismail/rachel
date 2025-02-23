@@ -9,14 +9,14 @@
 #endif
 #endif
 
-#define PUTS(s)  print_string(1, s)
-#define PUTN(x)  print_number(1, x)
-#define EPUTS(s) print_string(2, s)
-#define EPUTN(x) print_number(2, x)
+#define PUTS(s)  dputs(s, 1)
+#define PUTN(x)  dputs(string(x), 1)
+#define EPUTS(s) dputs(s, 2)
+#define EPUTN(x) dputs(string(x), 2)
 #define EXIT(x)  _exit(x)
 
-void print_string(int, const char *);
-void print_number(int, long);
+const char *string(long);
+void dputs(const char *, int);
 void flush(void);
 #else
 #include <stdio.h>
