@@ -34,8 +34,23 @@
 static char a[128];
 static size_t n;
 
+const char *
+string(long x) {
+	static char buf[32];
+	char *p;
+
+	p = &buf[(sizeof buf)-1];
+	do {
+		*--p = '0' + x%10;
+		x /= 10;
+	}
+	while (x > 0);
+
+	return p;
+}
+
 static void
-full_write(int fd, const char *buf, size_t count, int retry) {
+full_write(int fd, const char *buf, size_t count) {
 	size_t i, ret;
 
 	for (i = 0; i < count; ) {
@@ -45,20 +60,20 @@ full_write(int fd, const char *buf, size_t count, int retry) {
 			continue;
 		}
 
-		if (errno == EINTR && retry)
-			continue;
-
 		if (fd == 2)
 			break;
+		else if (errno == EINTR)
+			continue;
 
 		EPUTS("write error" EOL);
 		EXIT(2);
+
 	}
 }
 
 void
 flush(void) {
-	full_write(1, a, n, 1);
+	full_write(1, a, n);
 	n = 0;
 }
 
@@ -76,7 +91,7 @@ buffer(const char *p) {
 }
 
 void
-print_string(int fd, const char *s) {
+dputs(const char *s, int fd) {
 	size_t len;
 
 	if (fd == 1) {
@@ -84,22 +99,7 @@ print_string(int fd, const char *s) {
 	}
 	else {
 		for (len = 0; s[len]; len++);
-		full_write(fd, s, len, 0);
+		full_write(fd, s, len);
 	}
-}
-
-void
-print_number(int fd, long x) {
-	static char buf[32];
-	char *p;
-
-	p = &buf[(sizeof buf)-1];
-	do {
-		*--p = '0' + x%10;
-		x /= 10;
-	}
-	while (x > 0);
-
-	print_string(fd, p);
 }
 #endif

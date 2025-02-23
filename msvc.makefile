@@ -6,8 +6,9 @@ objs = check.obj leaf.obj main.obj node.obj out.obj prune.obj refine.obj \
  search.obj stack.obj
 
 !ifdef static
-CFLAGS = $(CFLAGS) /GS- /DSTATIC
-LDFLAGS = $(LDFLAGS) /subsystem:console
+CFLAGS = $(CFLAGS) /GS- /Gs0x100000 /DSTATIC
+LDFLAGS = $(LDFLAGS) /dynamicbase:no /nodefaultlib /stack:0x100000,0x100000 \
+	/subsystem:console
 objs = $(objs) crtw32.obj
 !endif
 
