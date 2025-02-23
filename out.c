@@ -35,7 +35,7 @@ static char a[128];
 static size_t n;
 
 static void
-full_write(int fd, const char *buf, size_t count, int retry) {
+full_write(int fd, const char *buf, size_t count) {
 	size_t i, ret;
 
 	for (i = 0; i < count; ) {
@@ -45,11 +45,11 @@ full_write(int fd, const char *buf, size_t count, int retry) {
 			continue;
 		}
 
-		if (errno == EINTR && retry)
-			continue;
-
 		if (fd == 2)
 			break;
+
+		if (errno == EINTR)
+			continue;
 
 		EPUTS("write error" EOL);
 		EXIT(2);
@@ -58,7 +58,7 @@ full_write(int fd, const char *buf, size_t count, int retry) {
 
 void
 flush(void) {
-	full_write(1, a, n, 1);
+	full_write(1, a, n);
 	n = 0;
 }
 
@@ -84,7 +84,7 @@ print_string(int fd, const char *s) {
 	}
 	else {
 		for (len = 0; s[len]; len++);
-		full_write(fd, s, len, 0);
+		full_write(fd, s, len);
 	}
 }
 
