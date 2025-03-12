@@ -106,7 +106,7 @@ _start:
 	push	%eax
 	call	main
 	push	%eax
-	jmp	_exit
+	call	_exit
 #elif __powerpc64__ && __linux__
 	addis	%r2, %r12, .TOC.-_start@ha
 	addi	%r2, %r2, .TOC.-_start@l

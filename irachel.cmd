@@ -1,5 +1,5 @@
 @echo off
-rem Copyright 2024 Oğuz İsmail Uysal <oguzismailuysal@gmail.com>
+rem Copyright 2024 Oguz Ismail Uysal <oguzismailuysal@gmail.com>
 rem
 rem This program is free software: you can redistribute it and/or modify
 rem it under the terms of the GNU General Public License as published by
