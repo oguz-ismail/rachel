@@ -16,6 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <windows.h>
 
 #define DELIM(c) ((c) == ' ' || (c) == '\t')
